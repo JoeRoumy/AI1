@@ -17,11 +17,12 @@ public class SaveWesteros extends SearchProblem {
 	public int expandedNodes;
 	
 	
-	private ArrayList<Snode> BF(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
+    private ArrayList<Snode> BF(ArrayList<Snode>nodes,Snode[] n) {
+        for(int i = n.length-1; i > -1; i--) {
+            nodes.add(nodes.size()-1,n[i]);
+        }
+        return nodes;
+    }
 
 	private ArrayList<Snode> DF(ArrayList<Snode>nodes,Snode[] n) {
 		for(int i = n.length-1;i>-1;i--) {

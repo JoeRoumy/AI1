@@ -1,10 +1,11 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 /*
  * need to consider repeated states
  * keep nodes from being deleted after dequeue
- * 
+ * heuristic considers number of white walkers
  * 
  * */
 
@@ -22,15 +23,20 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
-	private Solution DF(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
+	private LinkedList<Snode> DF(LinkedList<Snode>nodes,Snode[] n) {
+		for(int i = n.length-1;i>-1;i--) {
+			nodes.addFirst(n[i]);
+		}
+		return nodes;
 
 	}
 
-	private Solution ID(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
+	private LinkedList<Snode> ID(LinkedList<Snode>nodes,Snode[] n,int maxDeapth) {
+		for(int i = n.length-1;i>-1;i--) {
+			if(n[i].getDepth()<=maxDeapth)
+					nodes.addFirst(n[i]);
+		}
+		return nodes;
 
 	}
 
@@ -88,8 +94,8 @@ public class SaveWesteros extends SearchProblem {
 		Solution solution = null;
 		switch (strategy) {
 		case "BF":	solution = BF(grid);		break;
-		case "DF":	solution = DF(grid);		break;
-		case "ID":	solution = ID(grid);		break;
+//		case "DF":	solution = DF(grid);		break;
+//		case "ID":	solution = ID(grid);		break;
 		case "UC":	solution = UC(grid);		break;
 		case "GR1":	solution = GR1(grid);		break;
 		case "GR2":	solution = GR2(grid);		break;

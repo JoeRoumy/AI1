@@ -5,5 +5,7 @@ public class State {
 	public int y;
 	public int glassRemaining;
 	public int heuristic;
+	public int walkersLeft;
+	public boolean isGoal;
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 /*
  * need to consider repeated states
  * keep nodes from being deleted after dequeue
- * 
+ * heuristic considers number of white walkers
  * 
  * */
 

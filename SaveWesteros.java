@@ -44,10 +44,9 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> UC(ArrayList<Snode>nodes,Snode[] n) {
 		
 		for (int i = 0; i < n.length; i++) {
-			
+			nodes.add(binarySearch(nodes,0,nodes.size()-1, n[i].cost),n[i]);
 		}
-
-		
+	
 		return nodes;
 
 	}
@@ -76,7 +75,7 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
-	private void Search(Grid grid, String strategy, Boolean visualize) {
+	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
 
 		Snode leaf = null;
 
@@ -85,11 +84,28 @@ public class SaveWesteros extends SearchProblem {
 			System.out.println("Iteration number: "+i+2);
 		}
 		
+		 ArrayList<Snode> solution = new ArrayList<>(50);
+		 
+		 solution = GenerateSolution(solution, leaf);
+		 
 		if(visualize) {
-			PrintSolution(grid, leaf);
+			PrintSolution(grid, solution);
 		}
 		
 		System.out.println("Nodes expanded: "+expandedNodes);
+		
+		return solution;
+		
+	}
+
+	private ArrayList<Snode> GenerateSolution(ArrayList<Snode> solution, Snode leaf) {
+		
+		while (leaf.parent!=null) {
+			solution.add(0, leaf);
+			leaf =leaf.parent;
+		}
+		
+		return solution;
 		
 	}
 
@@ -128,9 +144,10 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
 	
-	private void PrintSolution(Grid grid, Snode leaf) {
-		// TODO Auto-generated method stub
+	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
+		
+		
 	}
 	
 	private Snode[] expand(Snode node) {
@@ -139,7 +156,7 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
 	
-	private int bs(ArrayList<Snode> q, int start, int end, int newCost) {
+	private int binarySearch(ArrayList<Snode> q, int start, int end, int newCost) {
 		//base case
 		if(start == end) {
 			return start;
@@ -148,9 +165,9 @@ public class SaveWesteros extends SearchProblem {
 		int center = (end+start)/2;
 		//redirect to left or right half
 		if(q.get(center).cost>newCost) {
-			return bs(q,start,center,newCost);
+			return binarySearch(q,start,center,newCost);
 		}else {
-			return bs(q,center,end,newCost);
+			return binarySearch(q,center,end,newCost);
 		}
 
 	}

@@ -23,18 +23,18 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
-	private LinkedList<Snode> DF(LinkedList<Snode>nodes,Snode[] n) {
+	private ArrayList<Snode> DF(ArrayList<Snode>nodes,Snode[] n) {
 		for(int i = n.length-1;i>-1;i--) {
-			nodes.addFirst(n[i]);
+			nodes.add(0,n[i]);
 		}
 		return nodes;
 
 	}
 
-	private LinkedList<Snode> ID(LinkedList<Snode>nodes,Snode[] n,int maxDeapth) {
+	private ArrayList<Snode> ID(ArrayList<Snode>nodes,Snode[] n,int maxDeapth) {
 		for(int i = n.length-1;i>-1;i--) {
 			if(n[i].getDepth()<=maxDeapth)
-					nodes.addFirst(n[i]);
+					nodes.add(0,n[i]);
 		}
 		return nodes;
 

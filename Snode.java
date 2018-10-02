@@ -1,5 +1,10 @@
 public class Snode {
 
+	public int getDepth() {
+		return depth;
+	}
+
+
 	public State state;
 	public Snode parent;
 	public Operator operator;

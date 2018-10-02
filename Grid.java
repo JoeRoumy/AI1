@@ -6,6 +6,20 @@ public class Grid {
     
     private static final int minDimension = 4;
     private char [][] grid;
+    private static ArrayList<Integer> allPositions;
+    
+    public Grid(int x) {
+        grid = new char[minDimension][minDimension];
+        grid[3][3] = 'J';
+        grid[0][0] = 'W';
+        grid[0][2] = 'W';
+        grid[1][1] = 'W';
+        grid[1][3] = 'W';
+        grid[2][0] = 'S';
+        grid[2][2] = 'W';
+        
+        
+    }
     
     
     public Grid(){
@@ -42,7 +56,7 @@ public class Grid {
     //returns an arrayList of positions of all white walkers and dragon stone with dragon stone position being the last element of the returned array
     public static ArrayList<Integer> generatePositions(int length, int width) {
         
-        ArrayList<Integer> allPositions = new ArrayList<Integer>();
+        allPositions = new ArrayList<Integer>();
         
         // to be documented...
         int minPosition = 0;
@@ -70,12 +84,19 @@ public class Grid {
     }
     
     public static void main(String [] args) {
-        Grid myGrid = new Grid();
+        Grid myGrid = new Grid(4);
         
         System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
         
     }
     
+    public char [][] getGrid(){
+        return this.grid;
+    }
+    
+    public ArrayList<Integer> getPositions(){
+        return allPositions;
+    }
+    
     
 }
-

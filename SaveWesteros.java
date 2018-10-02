@@ -111,7 +111,7 @@ public class SaveWesteros extends SearchProblem {
 			}
 
 			switch (strategy) {
-			case "BF":	queue = BF(grid);		break;
+			case "BF":	queue = BF(queue,expand(thisNode));		break;
 			case "DF":	queue = DF(queue,expand(thisNode));		break;
 			case "ID":	queue = ID(queue,expand(thisNode),currentDepth);		break;
 			case "UC":	queue = UC(queue,expand(thisNode));		break;

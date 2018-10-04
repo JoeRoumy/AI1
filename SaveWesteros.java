@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /*
@@ -16,7 +15,12 @@ public class SaveWesteros extends SearchProblem {
 	public ArrayList<Snode> queue;
 	public int expandedNodes;
 	
+	public static void main(String[] args) {
+		Grid g = new Grid(666);
+	}
 	
+	
+	// breadth first enqueueing function
     private ArrayList<Snode> BF(ArrayList<Snode>nodes,Snode[] n) {
         for(int i = n.length-1; i > -1; i--) {
             nodes.add(nodes.size()-1,n[i]);
@@ -24,6 +28,7 @@ public class SaveWesteros extends SearchProblem {
         return nodes;
     }
 
+	// depth first function
 	private ArrayList<Snode> DF(ArrayList<Snode>nodes,Snode[] n) {
 		for(int i = n.length-1;i>-1;i--) {
 			nodes.add(0,n[i]);
@@ -32,6 +37,7 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
+	// iterative deepening enqueueing function
 	private ArrayList<Snode> ID(ArrayList<Snode>nodes,Snode[] n,int maxDeapth) {
 		for(int i = n.length-1;i>-1;i--) {
 			if(n[i].getDepth()<=maxDeapth)
@@ -41,40 +47,39 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
+	// uniform cost enqueueing function
 	private ArrayList<Snode> UC(ArrayList<Snode>nodes,Snode[] n) {
 		
 		for (int i = 0; i < n.length; i++) {
-			nodes.add(binarySearch(nodes,0,nodes.size()-1, n[i].cost),n[i]);
+			nodes.add(binarySearchCost(nodes,0,nodes.size()-1, n[i].cost),n[i]);
 		}
 	
 		return nodes;
 
 	}
 
-	private ArrayList<Snode> GR1(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
+	// greedy enqueueing function
+	private ArrayList<Snode> GR(ArrayList<Snode>nodes,Snode[] n) {
+
+		for (int i = 0; i < n.length; i++) {
+			nodes.add(binarySearchHeuristic(nodes,0,nodes.size()-1, n[i].state.heuristic),n[i]);
+		}
+	
+		return nodes;
+	}
+
+	// a star enqueueing function
+	private ArrayList<Snode> AS(ArrayList<Snode>nodes,Snode[] n) {
+
+		for (int i = 0; i < n.length; i++) {
+			nodes.add(binarySearchCostAndHeuristic(nodes,0,nodes.size()-1, n[i].cost+n[i].state.heuristic),n[i]);
+		}
+	
+		return nodes;
 
 	}
 
-	private ArrayList<Snode> GR2(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	private ArrayList<Snode> AS1(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	private ArrayList<Snode> AS2(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
+	// control the search and visualization
 	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
 
 		Snode leaf = null;
@@ -98,6 +103,7 @@ public class SaveWesteros extends SearchProblem {
 		
 	}
 
+	// backtracks from goal to root to get the path for the solution
 	private ArrayList<Snode> GenerateSolution(ArrayList<Snode> solution, Snode leaf) {
 		
 		while (leaf.parent!=null) {
@@ -109,6 +115,9 @@ public class SaveWesteros extends SearchProblem {
 		
 	}
 
+	
+	// helper to search to facilitate looping for id  
+	// switches between the different strategies and handles basic search procedure
 	private Snode SearchHelper(Grid grid, String strategy, int currentDepth) {
 		//solution
 		Snode leaf = null;
@@ -121,7 +130,7 @@ public class SaveWesteros extends SearchProblem {
 			
 		
 		while (queue.size()>0) {
-			Snode thisNode = queue.remove(0);
+			Snode thisNode = queue.remove(0); //TODO dequeue here
 			if(thisNode.state.isGoal) {
 				return thisNode;
 			}
@@ -131,10 +140,8 @@ public class SaveWesteros extends SearchProblem {
 			case "DF":	queue = DF(queue,expand(thisNode));		break;
 			case "ID":	queue = ID(queue,expand(thisNode),currentDepth);		break;
 			case "UC":	queue = UC(queue,expand(thisNode));		break;
-			case "GR1":	queue = GR1(grid);		break;
-			case "GR2":	queue = GR2(grid);		break;
-			case "AS1":	queue = AS1(grid);		break;
-			case "AS2":	queue = AS2(grid);		break;
+			case "GR1":	queue = GR(queue,expand(thisNode));		break;
+			case "AS2":	queue = AS(queue,expand(thisNode));		break;
 			default: System.out.println("Invalid search strategy "+strategy);			return null;
 			}
 		
@@ -143,20 +150,28 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 	
-	
+	// to visualize the solution step by step
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
 		
 		
 	}
 	
+	// to generate the child nodes of a given node
 	private Snode[] expand(Snode node) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	// to reflect the dequeueing on the grid
+	private void dequeue() {
+		// TODO Auto-generated method stub
+
+	}
 	
-	private int binarySearch(ArrayList<Snode> q, int start, int end, int newCost) {
+	
+	// to insert in ucs
+	private int binarySearchCost(ArrayList<Snode> q, int start, int end, int newCost) {
 		//base case
 		if(start == end) {
 			return start;
@@ -165,15 +180,46 @@ public class SaveWesteros extends SearchProblem {
 		int center = (end+start)/2;
 		//redirect to left or right half
 		if(q.get(center).cost>newCost) {
-			return binarySearch(q,start,center,newCost);
+			return binarySearchCost(q,start,center,newCost);
 		}else {
-			return binarySearch(q,center,end,newCost);
+			return binarySearchCost(q,center,end,newCost);
 		}
 
 	}
 	
+	// to insert in gs
+	private int binarySearchHeuristic(ArrayList<Snode> q, int start, int end, int newHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.heuristic>newHeuristic) {
+			return binarySearchHeuristic(q,start,center,newHeuristic);
+		}else {
+			return binarySearchHeuristic(q,center,end,newHeuristic);
+		}
+
+	}
 	
-	
+	// to insert in as
+	private int binarySearchCostAndHeuristic(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.heuristic>newCostAndHeuristic) {
+			return binarySearchCostAndHeuristic(q,start,center,newCostAndHeuristic);
+		}else {
+			return binarySearchCostAndHeuristic(q,center,end,newCostAndHeuristic);
+		}
+
+	}
 	
 	
 }

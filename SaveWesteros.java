@@ -16,67 +16,77 @@ public class SaveWesteros extends SearchProblem {
 	public ArrayList<Snode> queue;
 	public int expandedNodes;
 	
+	public static void main(String[] args) {
+		Grid g = new Grid(666);
+	}
 	
+	
+	// breadth first enqueueing function
     private ArrayList<Snode> BF(ArrayList<Snode>nodes,Snode[] n) {
         for(int i = n.length-1; i > -1; i--) {
+        	if(n[i]!=null)
             nodes.add(nodes.size()-1,n[i]);
         }
         return nodes;
     }
 
+	// depth first function
 	private ArrayList<Snode> DF(ArrayList<Snode>nodes,Snode[] n) {
 		for(int i = n.length-1;i>-1;i--) {
+        	if(n[i]!=null)
 			nodes.add(0,n[i]);
 		}
 		return nodes;
 
 	}
 
+	// iterative deepening enqueueing function
 	private ArrayList<Snode> ID(ArrayList<Snode>nodes,Snode[] n,int maxDeapth) {
 		for(int i = n.length-1;i>-1;i--) {
-			if(n[i].getDepth()<=maxDeapth)
+			if(n[i] != null && n[i].getDepth()<=maxDeapth)
 					nodes.add(0,n[i]);
 		}
 		return nodes;
 
 	}
 
+	// uniform cost enqueueing function
 	private ArrayList<Snode> UC(ArrayList<Snode>nodes,Snode[] n) {
 		
 		for (int i = 0; i < n.length; i++) {
-			
+        	if(n[i]!=null)
+			nodes.add(binarySearchCost(nodes,0,nodes.size()-1, n[i].cost),n[i]);
 		}
-
-		
+	
 		return nodes;
 
 	}
 
-	private ArrayList<Snode> GR1(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
+	// greedy enqueueing function
+	private ArrayList<Snode> GR(ArrayList<Snode>nodes,Snode[] n) {
+
+		for (int i = 0; i < n.length; i++) {
+        	if(n[i]!=null)
+			nodes.add(binarySearchHeuristic(nodes,0,nodes.size()-1, n[i].state.heuristic),n[i]);
+		}
+	
+		return nodes;
+	}
+
+	// a star enqueueing function
+	private ArrayList<Snode> AS(ArrayList<Snode>nodes,Snode[] n) {
+
+		for (int i = 0; i < n.length; i++) {
+        	if(n[i]!=null)
+			nodes.add(binarySearchCostAndHeuristic(nodes,0,nodes.size()-1, n[i].cost+n[i].state.heuristic),n[i]);
+		}
+	
+		return nodes;
 
 	}
 
-	private ArrayList<Snode> GR2(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	private ArrayList<Snode> AS1(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	private ArrayList<Snode> AS2(Grid grid) {
-		// TODO Auto-generated method stub
-		return null;
-
-	}
-
-	private void Search(Grid grid, String strategy, Boolean visualize) {
+	// control the search and visualization
+	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
 
 		Snode leaf = null;
 
@@ -85,14 +95,35 @@ public class SaveWesteros extends SearchProblem {
 			System.out.println("Iteration number: "+i+2);
 		}
 		
+		 ArrayList<Snode> solution = new ArrayList<>(50);
+		 
+		 solution = GenerateSolution(solution, leaf);
+		 
 		if(visualize) {
-			PrintSolution(grid, leaf);
+			PrintSolution(grid, solution);
 		}
 		
 		System.out.println("Nodes expanded: "+expandedNodes);
 		
+		return solution;
+		
 	}
 
+	// backtracks from goal to root to get the path for the solution
+	private ArrayList<Snode> GenerateSolution(ArrayList<Snode> solution, Snode leaf) {
+		
+		while (leaf.parent!=null) {
+			solution.add(0, leaf);
+			leaf =leaf.parent;
+		}
+		
+		return solution;
+		
+	}
+
+	
+	// helper to search to facilitate looping for id  
+	// switches between the different strategies and handles basic search procedure
 	private Snode SearchHelper(Grid grid, String strategy, int currentDepth) {
 		//solution
 		Snode leaf = null;
@@ -105,7 +136,7 @@ public class SaveWesteros extends SearchProblem {
 			
 		
 		while (queue.size()>0) {
-			Snode thisNode = queue.remove(0);
+			Snode thisNode = queue.remove(0); 
 			if(thisNode.state.isGoal) {
 				return thisNode;
 			}
@@ -115,10 +146,8 @@ public class SaveWesteros extends SearchProblem {
 			case "DF":	queue = DF(queue,expand(thisNode));		break;
 			case "ID":	queue = ID(queue,expand(thisNode),currentDepth);		break;
 			case "UC":	queue = UC(queue,expand(thisNode));		break;
-			case "GR1":	queue = GR1(grid);		break;
-			case "GR2":	queue = GR2(grid);		break;
-			case "AS1":	queue = AS1(grid);		break;
-			case "AS2":	queue = AS2(grid);		break;
+			case "GR1":	queue = GR(queue,expand(thisNode));		break;
+			case "AS2":	queue = AS(queue,expand(thisNode));		break;
 			default: System.out.println("Invalid search strategy "+strategy);			return null;
 			}
 		
@@ -127,19 +156,68 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 	
+	// to visualize the solution step by step
+	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
+
+		for (int i = 1; i < solution.size(); i++) {
+			if(applyToGrid(grid, solution.get(i)))
+			System.out.println(grid.getGrid().toString());
+		}
+		
+	}
 	
-	private void PrintSolution(Grid grid, Snode leaf) {
+	// to generate the child nodes of a given node
+	private Snode[] expand(Snode node) {
+		Snode[] newNodes = new Snode[operators.length];
+		expandedNodes++;
+		
 		// TODO Auto-generated method stub
 
+		
+		return newNodes;
 	}
 	
-	private Snode[] expand(Snode node) {
-		// TODO Auto-generated method stub
-		return null;
+	// to reflect the dequeueing on the grid
+	private boolean applyToGrid(Grid grid, Snode step) {
+		switch(step.operator) {
+		case Forward:
+			switch(step.state.direction) {
+			case E: grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
+					grid.getGrid()[++grid.johnsx][grid.johnsy] = 'J';
+				break;
+			case N:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
+					grid.getGrid()[grid.johnsx][--grid.johnsy] = 'J';
+				break;
+			case S:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
+					grid.getGrid()[grid.johnsx][++grid.johnsy] = 'J';
+				break;
+			case W:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
+					grid.getGrid()[--grid.johnsx][grid.johnsy] = 'J';
+				break;
+			}
+			return true;
+		case Stab:
+			if(grid.getGrid()[grid.johnsx+1][grid.johnsy] == 'W')
+				grid.getGrid()[grid.johnsx+1][grid.johnsy] = '\u0000';
+			if(grid.getGrid()[grid.johnsx-1][grid.johnsy] == 'W')
+				grid.getGrid()[grid.johnsx-1][grid.johnsy] = '\u0000';
+			if(grid.getGrid()[grid.johnsx][grid.johnsy+1] == 'W')
+				grid.getGrid()[grid.johnsx][grid.johnsy+1] = '\u0000';
+			if(grid.getGrid()[grid.johnsx][grid.johnsy-1] == 'W')
+				grid.getGrid()[grid.johnsx][grid.johnsy-1] = '\u0000';
+			return true;
+		default:
+			return false;
+		
+		}
 	}
 	
 	
-	private int bs(ArrayList<Snode> q, int start, int end, int newCost) {
+	
+	
+	
+	// to insert in ucs
+	private int binarySearchCost(ArrayList<Snode> q, int start, int end, int newCost) {
 		//base case
 		if(start == end) {
 			return start;
@@ -148,15 +226,46 @@ public class SaveWesteros extends SearchProblem {
 		int center = (end+start)/2;
 		//redirect to left or right half
 		if(q.get(center).cost>newCost) {
-			return bs(q,start,center,newCost);
+			return binarySearchCost(q,start,center,newCost);
 		}else {
-			return bs(q,center,end,newCost);
+			return binarySearchCost(q,center,end,newCost);
 		}
 
 	}
 	
+	// to insert in gs
+	private int binarySearchHeuristic(ArrayList<Snode> q, int start, int end, int newHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.heuristic>newHeuristic) {
+			return binarySearchHeuristic(q,start,center,newHeuristic);
+		}else {
+			return binarySearchHeuristic(q,center,end,newHeuristic);
+		}
+
+	}
 	
-	
+	// to insert in as
+	private int binarySearchCostAndHeuristic(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.heuristic+q.get(center).cost>newCostAndHeuristic) {
+			return binarySearchCostAndHeuristic(q,start,center,newCostAndHeuristic);
+		}else {
+			return binarySearchCostAndHeuristic(q,center,end,newCostAndHeuristic);
+		}
+
+	}
 	
 	
 }

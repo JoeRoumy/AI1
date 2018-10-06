@@ -1,3 +1,4 @@
+
 public class Snode {
 
 	public int getDepth() {

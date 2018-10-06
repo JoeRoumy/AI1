@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 
 
 /*
@@ -17,7 +17,8 @@ public class SaveWesteros extends SearchProblem {
 	public int expandedNodes;
 	
 	public static void main(String[] args) {
-		Grid g = new Grid(666);
+		Grid grid = new Grid(666);
+		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 	}
 	
 	
@@ -66,8 +67,8 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> GR(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
-			nodes.add(binarySearchHeuristic(nodes,0,nodes.size()-1, n[i].state.heuristic),n[i]);
+//        	if(n[i]!=null)
+//			nodes.add(binarySearchHeuristic(nodes,0,nodes.size()-1, n[i].state.heuristic),n[i]);
 		}
 	
 		return nodes;
@@ -77,8 +78,8 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> AS(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
-			nodes.add(binarySearchCostAndHeuristic(nodes,0,nodes.size()-1, n[i].cost+n[i].state.heuristic),n[i]);
+//        	if(n[i]!=null)
+//			nodes.add(binarySearchCostAndHeuristic(nodes,0,nodes.size()-1, n[i].cost+n[i].state.heuristic),n[i]);
 		}
 	
 		return nodes;
@@ -161,7 +162,7 @@ public class SaveWesteros extends SearchProblem {
 
 		for (int i = 1; i < solution.size(); i++) {
 			if(applyToGrid(grid, solution.get(i)))
-			System.out.println(grid.getGrid().toString());
+			System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 		}
 		
 	}
@@ -222,38 +223,38 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
 	// to insert in gs
-	private int binarySearchHeuristic(ArrayList<Snode> q, int start, int end, int newHeuristic) {
-		//base case
-		if(start == end) {
-			return start;
-		}
-		//calculate mid of list
-		int center = (end+start)/2;
-		//redirect to left or right half
-		if(q.get(center).state.heuristic>newHeuristic) {
-			return binarySearchHeuristic(q,start,center,newHeuristic);
-		}else {
-			return binarySearchHeuristic(q,center,end,newHeuristic);
-		}
-
-	}
-	
-	// to insert in as
-	private int binarySearchCostAndHeuristic(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic) {
-		//base case
-		if(start == end) {
-			return start;
-		}
-		//calculate mid of list
-		int center = (end+start)/2;
-		//redirect to left or right half
-		if(q.get(center).state.heuristic+q.get(center).cost>newCostAndHeuristic) {
-			return binarySearchCostAndHeuristic(q,start,center,newCostAndHeuristic);
-		}else {
-			return binarySearchCostAndHeuristic(q,center,end,newCostAndHeuristic);
-		}
-
-	}
+//	private int binarySearchHeuristic(ArrayList<Snode> q, int start, int end, int newHeuristic) {
+//		//base case
+//		if(start == end) {
+//			return start;
+//		}
+//		//calculate mid of list
+//		int center = (end+start)/2;
+//		//redirect to left or right half
+//		if(q.get(center).state.heuristic>newHeuristic) {
+//			return binarySearchHeuristic(q,start,center,newHeuristic);
+//		}else {
+//			return binarySearchHeuristic(q,center,end,newHeuristic);
+//		}
+//
+//	}
+//	
+//	// to insert in as
+//	private int binarySearchCostAndHeuristic(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic) {
+//		//base case
+//		if(start == end) {
+//			return start;
+//		}
+//		//calculate mid of list
+//		int center = (end+start)/2;
+//		//redirect to left or right half
+//		if(q.get(center).state.heuristic+q.get(center).cost>newCostAndHeuristic) {
+//			return binarySearchCostAndHeuristic(q,start,center,newCostAndHeuristic);
+//		}else {
+//			return binarySearchCostAndHeuristic(q,center,end,newCostAndHeuristic);
+//		}
+//
+//	}
 	
 	
 }

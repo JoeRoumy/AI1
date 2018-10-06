@@ -8,7 +8,7 @@ public class State {
     public int x;
     public int y;
     public int glassRemaining;
-    public int heuristic;
+    public int totalGlassUsed;
     public int walkersLeft;
     public boolean isGoal;
     public ArrayList<Integer> walkerPositions;
@@ -20,7 +20,6 @@ public class State {
         this.x = maxX - 1;
         this.y = maxY - 1;
         this.glassRemaining = glassRemaining;
-        this.heuristic = heuristic;
         this.walkersLeft = walkersLeft;
         this.isGoal = walkersLeft == 0;
     }
@@ -30,7 +29,6 @@ public class State {
         this.x = x;
         this.y = y;
         this.glassRemaining = glassRemaining;
-        this.heuristic = heuristic;
         this.walkersLeft = walkersLeft;
         this. isGoal = walkersLeft == 0;
         

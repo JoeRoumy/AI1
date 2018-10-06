@@ -10,6 +10,16 @@ import java.util.Arrays;
  * */
 
 
+/*
+ * 						 number of walkers left
+ * first heuristic is : ------------------------- 
+ * 						3 * number of glass used
+ *
+ *
+ *	second heuristic is distance from closest walker
+ *
+ * */
+
 
 public class SaveWesteros extends SearchProblem {
 	
@@ -19,6 +29,7 @@ public class SaveWesteros extends SearchProblem {
 	public static void main(String[] args) {
 		Grid grid = new Grid(666);
 		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+
 	}
 	
 	
@@ -63,28 +74,54 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 
-	// greedy enqueueing function
-	private ArrayList<Snode> GR(ArrayList<Snode>nodes,Snode[] n) {
+	// greedy enqueueing function with first heuristic
+	private ArrayList<Snode> GR1(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-//        	if(n[i]!=null)
-//			nodes.add(binarySearchHeuristic(nodes,0,nodes.size()-1, n[i].state.heuristic),n[i]);
+        	if(n[i]!=null)
+			nodes.add(binarySearchHeuristic1(nodes,0,nodes.size()-1, n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
 		}
 	
 		return nodes;
 	}
 
-	// a star enqueueing function
-	private ArrayList<Snode> AS(ArrayList<Snode>nodes,Snode[] n) {
+
+	// a star enqueueing function with first heuristic
+	private ArrayList<Snode> AS1(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-//        	if(n[i]!=null)
-//			nodes.add(binarySearchCostAndHeuristic(nodes,0,nodes.size()-1, n[i].cost+n[i].state.heuristic),n[i]);
+        	if(n[i]!=null)
+			nodes.add(binarySearchCostAndHeuristic1(nodes,0,nodes.size()-1, n[i].cost+n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
 		}
 	
 		return nodes;
 
 	}
+	
+	// greedy enqueueing function with first heuristic
+	private ArrayList<Snode> GR2(ArrayList<Snode>nodes,Snode[] n, int dim) {
+
+		for (int i = 0; i < n.length; i++) {
+        	if(n[i]!=null)
+			nodes.add(binarySearchHeuristic2(nodes,0,nodes.size()-1,distanceToClosestWalker(dim,n[i]),dim),n[i]);
+		}
+	
+		return nodes;
+	}
+
+
+	// a star enqueueing function with first heuristic
+	private ArrayList<Snode> AS2(ArrayList<Snode>nodes,Snode[] n, int dim) {
+
+		for (int i = 0; i < n.length; i++) {
+        	if(n[i]!=null)
+			nodes.add(binarySearchCostAndHeuristic2(nodes,0,nodes.size()-1, n[i].cost+distanceToClosestWalker(dim,n[i]),dim),n[i]);
+		}
+	
+		return nodes;
+
+	}
+	
 
 	// control the search and visualization
 	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
@@ -126,8 +163,6 @@ public class SaveWesteros extends SearchProblem {
 	// helper to search to facilitate looping for id  
 	// switches between the different strategies and handles basic search procedure
 	private Snode SearchHelper(Grid grid, String strategy, int currentDepth) {
-		//solution
-		Snode leaf = null;
 		
 		//initialization
 		queue = new ArrayList<Snode>(500);
@@ -147,8 +182,10 @@ public class SaveWesteros extends SearchProblem {
 			case "DF":	queue = DF(queue,expand(thisNode));		break;
 			case "ID":	queue = ID(queue,expand(thisNode),currentDepth);		break;
 			case "UC":	queue = UC(queue,expand(thisNode));		break;
-			case "GR1":	queue = GR(queue,expand(thisNode));		break;
-			case "AS2":	queue = AS(queue,expand(thisNode));		break;
+			case "GR1":	queue = GR1(queue,expand(thisNode));		break;
+			case "AS1":	queue = AS1(queue,expand(thisNode));		break;
+			case "GR2":	queue = GR2(queue,expand(thisNode),grid.johnsx);		break;
+			case "AS2":	queue = AS2(queue,expand(thisNode),grid.johnsx);		break;
 			default: System.out.println("Invalid search strategy "+strategy);			return null;
 			}
 		
@@ -222,39 +259,132 @@ public class SaveWesteros extends SearchProblem {
 
 	}
 	
-	// to insert in gs
-//	private int binarySearchHeuristic(ArrayList<Snode> q, int start, int end, int newHeuristic) {
-//		//base case
-//		if(start == end) {
-//			return start;
-//		}
-//		//calculate mid of list
-//		int center = (end+start)/2;
-//		//redirect to left or right half
-//		if(q.get(center).state.heuristic>newHeuristic) {
-//			return binarySearchHeuristic(q,start,center,newHeuristic);
-//		}else {
-//			return binarySearchHeuristic(q,center,end,newHeuristic);
-//		}
-//
-//	}
-//	
-//	// to insert in as
-//	private int binarySearchCostAndHeuristic(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic) {
-//		//base case
-//		if(start == end) {
-//			return start;
-//		}
-//		//calculate mid of list
-//		int center = (end+start)/2;
-//		//redirect to left or right half
-//		if(q.get(center).state.heuristic+q.get(center).cost>newCostAndHeuristic) {
-//			return binarySearchCostAndHeuristic(q,start,center,newCostAndHeuristic);
-//		}else {
-//			return binarySearchCostAndHeuristic(q,center,end,newCostAndHeuristic);
-//		}
-//
-//	}
+//	 to insert in gs1
+	private int binarySearchHeuristic1(ArrayList<Snode> q, int start, int end, double newHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)>newHeuristic) {
+			return binarySearchHeuristic1(q,start,center,newHeuristic);
+		}else {
+			return binarySearchHeuristic1(q,center,end,newHeuristic);
+		}
+
+	}
 	
+	// to insert in as1
+	private int binarySearchCostAndHeuristic1(ArrayList<Snode> q, int start, int end, double newCostAndHeuristic) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
+			return binarySearchCostAndHeuristic1(q,start,center,newCostAndHeuristic);
+		}else {
+			return binarySearchCostAndHeuristic1(q,center,end,newCostAndHeuristic);
+		}
+
+	}
+	
+	
+//	 to insert in gs2
+	private int binarySearchHeuristic2(ArrayList<Snode> q, int start, int end, int newHeuristic,int dim) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(distanceToClosestWalker(dim,q.get(center))>newHeuristic) {
+			return binarySearchHeuristic2(q,start,center,newHeuristic,dim);
+		}else {
+			return binarySearchHeuristic2(q,center,end,newHeuristic,dim);
+		}
+
+	}
+	
+	// to insert in as2
+	private int binarySearchCostAndHeuristic2(ArrayList<Snode> q, int start, int end, int newCostAndHeuristic,int dim) {
+		//base case
+		if(start == end) {
+			return start;
+		}
+		//calculate mid of list
+		int center = (end+start)/2;
+		//redirect to left or right half
+		if(distanceToClosestWalker(dim,q.get(center))+q.get(center).cost>newCostAndHeuristic) {
+			return binarySearchCostAndHeuristic2(q,start,center,newCostAndHeuristic,dim);
+		}else {
+			return binarySearchCostAndHeuristic2(q,center,end,newCostAndHeuristic,dim);
+		}
+
+	}
+	
+	private int distanceToClosestWalker(int dim, Snode node) {		
+		int xs = node.state.x;
+		int ys = node.state.y; 
+		ArrayList<Integer> list = node.state.walkerPositions;
+		
+		for (int d = 1; d <= dim; d++)
+		{
+		    for (int i = 0; i <= 2*d; i++) {
+					int x1 = xs-d;
+					int y1 = ys-d+i;
+					
+					int x2 = xs-d+i;
+					int y2 = ys-d;
+					
+					int x3 = xs+d;
+					int y3 = ys+d-i;
+					
+					int x4 = xs+d-i;
+					int y4 = ys+d;
+					
+					int loc = x1+ dim*y1;
+					if(x1>=0 && y1>=0 && (loc=list.indexOf(loc))>=0) {
+						if(list.get(loc) != '\u0000') {
+							int a = Math.abs(x1-xs);
+							int b = Math.abs(y1-ys);
+							return a+b+(a>0&&b>0?1:0);
+						}
+					}
+					loc=x2+dim*y2;
+					if(x2>=0 && y2>=0 && (loc=list.indexOf(loc))>=0) {
+						if(list.get(loc) != '\u0000') {
+							int a = Math.abs(x2-xs);
+							int b = Math.abs(y2-ys);
+							return a+b+(a>0&&b>0?1:0);
+						}
+					}
+					loc=x3+dim*y3;
+					if(x3>=0 && y3>=0 && (loc=list.indexOf(loc))>=0) {
+						if(list.get(loc) != '\u0000') {
+							int a = Math.abs(x3-xs);
+							int b = Math.abs(y3-ys);
+							return a+b+(a>0&&b>0?1:0);
+						}
+					}
+					loc=x4+dim*y4;
+					if(x4>=0 && y4>=0 && (loc=list.indexOf(loc))>=0) {
+						if(list.get(loc) != '\u0000') {
+							int a = Math.abs(x4-xs);
+							int b = Math.abs(y4-ys);
+							return a+b+(a>0&&b>0?1:0);
+						}
+					}
+			}
+		}
+		
+		
+		return -1;
+	}
 	
 }

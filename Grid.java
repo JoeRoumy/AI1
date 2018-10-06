@@ -7,6 +7,8 @@ public class Grid {
     private static final int minDimension = 4;
     private char [][] grid;
     private static ArrayList<Integer> allPositions;
+    public int johnsx = minDimension-1;
+    public int johnsy = minDimension-1;
     
     public Grid(int x) {
         grid = new char[minDimension][minDimension];
@@ -25,6 +27,8 @@ public class Grid {
     public Grid(){
         int gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
         int gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
+        johnsx = gridWidth-1;
+        johnsy = gridLength-1;
         
         //generating random positions of white walkers and dragon stone on the grid
         ArrayList<Integer> positions = generatePositions(gridLength, gridWidth);

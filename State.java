@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class State {
     
     public enum Direction {N, S, W, E};
@@ -9,7 +11,7 @@ public class State {
     public int heuristic;
     public int walkersLeft;
     public boolean isGoal;
-    
+    public ArrayList<Integer> walkerPositions;
     
     
     

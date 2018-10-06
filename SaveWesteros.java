@@ -181,30 +181,18 @@ public class SaveWesteros extends SearchProblem {
 	private boolean applyToGrid(Grid grid, Snode step) {
 		switch(step.operator) {
 		case Forward:
-			switch(step.state.direction) {
-			case E: grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
-					grid.getGrid()[++grid.johnsx][grid.johnsy] = 'J';
-				break;
-			case N:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
-					grid.getGrid()[grid.johnsx][--grid.johnsy] = 'J';
-				break;
-			case S:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
-					grid.getGrid()[grid.johnsx][++grid.johnsy] = 'J';
-				break;
-			case W:	grid.getGrid()[grid.johnsx][grid.johnsy] = '\u0000';
-					grid.getGrid()[--grid.johnsx][grid.johnsy] = 'J';
-				break;
-			}
+			grid.getGrid()[step.parent.state.x][step.parent.state.y] = '\u0000';
+			grid.getGrid()[step.state.x][step.state.y] = 'J';
 			return true;
 		case Stab:
-			if(grid.getGrid()[grid.johnsx+1][grid.johnsy] == 'W')
-				grid.getGrid()[grid.johnsx+1][grid.johnsy] = '\u0000';
-			if(grid.getGrid()[grid.johnsx-1][grid.johnsy] == 'W')
-				grid.getGrid()[grid.johnsx-1][grid.johnsy] = '\u0000';
-			if(grid.getGrid()[grid.johnsx][grid.johnsy+1] == 'W')
-				grid.getGrid()[grid.johnsx][grid.johnsy+1] = '\u0000';
-			if(grid.getGrid()[grid.johnsx][grid.johnsy-1] == 'W')
-				grid.getGrid()[grid.johnsx][grid.johnsy-1] = '\u0000';
+			if(grid.getGrid()[step.state.x+1][step.state.y] == 'W')
+				grid.getGrid()[step.state.x+1][step.state.y] = '\u0000';
+			if(grid.getGrid()[step.state.x-1][step.state.y] == 'W')
+				grid.getGrid()[step.state.x-1][step.state.y] = '\u0000';
+			if(grid.getGrid()[step.state.x][step.state.y+1] == 'W')
+				grid.getGrid()[step.state.x][step.state.y+1] = '\u0000';
+			if(grid.getGrid()[step.state.x][step.state.y-1] == 'W')
+				grid.getGrid()[step.state.x][step.state.y-1] = '\u0000';
 			return true;
 		default:
 			return false;

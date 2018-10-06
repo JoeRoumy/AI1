@@ -7,6 +7,8 @@ public class Grid {
     private static final int minDimension = 4;
     private char [][] grid;
     private static ArrayList<Integer> allPositions;
+    
+    //static initial position
     public int johnsx = minDimension-1;
     public int johnsy = minDimension-1;
     

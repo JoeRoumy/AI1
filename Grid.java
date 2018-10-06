@@ -17,6 +17,8 @@ public class Grid {
         grid[1][3] = 'W';
         grid[2][0] = 'S';
         grid[2][2] = 'W';
+        grid[2][3] = 'O';
+        grid[3][1] = 'O';
         
         
     }
@@ -38,10 +40,15 @@ public class Grid {
         
         for(int i = 0; i < positionSize; i++) {
             char spot;
+            int currentPosition = positions.get(i);
             if(i == positionSize - 1)
                 spot = 'S';
-            else spot = 'W';
-            int currentPosition = positions.get(i);
+            else {
+                if(currentPosition < 0)
+                    spot = 'O';
+                else spot = 'W';
+            }
+            currentPosition = Math.abs(currentPosition);
             int row = currentPosition / gridWidth;
             int column = currentPosition % gridWidth;
             
@@ -68,8 +75,12 @@ public class Grid {
         
         while(maxPosition < (length * width) - offset ) {
             maxPosition = minPosition + offset ;
-            int position =  ThreadLocalRandom.current().nextInt(minPosition, maxPosition  );
-            allPositions.add(position);
+            int position =  ThreadLocalRandom.current().nextInt(minPosition, maxPosition);
+            int isObstacle = ThreadLocalRandom.current().nextInt(0,2);
+            System.out.println("isObstacle " + isObstacle);
+            if(isObstacle == 0)
+                allPositions.add(position);
+            else allPositions.add(-1 * position);
             minPosition = position + 1;
         }
         boolean isInArray = true;
@@ -84,7 +95,7 @@ public class Grid {
     }
     
     public static void main(String [] args) {
-        Grid myGrid = new Grid(4);
+        Grid myGrid = new Grid();
         
         System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
         
@@ -100,3 +111,4 @@ public class Grid {
     
     
 }
+

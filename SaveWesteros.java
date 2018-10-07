@@ -352,7 +352,6 @@ public class SaveWesteros extends SearchProblem {
             }
             newNodes[i] = newNode;
         }        
-        System.out.println(newNodes[0].operator);
         return newNodes;
     }
     
@@ -404,7 +403,7 @@ public class SaveWesteros extends SearchProblem {
 		if(q.get(center).cost>newCost) {
 			return binarySearchCost(q,start,center,newCost);
 		}else {
-			return binarySearchCost(q,center,end,newCost);
+			return binarySearchCost(q,center+1,end,newCost);
 		}
 
 	}
@@ -421,7 +420,7 @@ public class SaveWesteros extends SearchProblem {
 		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)>newHeuristic) {
 			return binarySearchHeuristic1(q,start,center,newHeuristic);
 		}else {
-			return binarySearchHeuristic1(q,center,end,newHeuristic);
+			return binarySearchHeuristic1(q,center+1,end,newHeuristic);
 		}
 
 	}
@@ -438,7 +437,7 @@ public class SaveWesteros extends SearchProblem {
 		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
 			return binarySearchCostAndHeuristic1(q,start,center,newCostAndHeuristic);
 		}else {
-			return binarySearchCostAndHeuristic1(q,center,end,newCostAndHeuristic);
+			return binarySearchCostAndHeuristic1(q,center+1,end,newCostAndHeuristic);
 		}
 
 	}
@@ -456,7 +455,7 @@ public class SaveWesteros extends SearchProblem {
 		if(distanceToClosestWalker(dim,q.get(center))>newHeuristic) {
 			return binarySearchHeuristic2(q,start,center,newHeuristic,dim);
 		}else {
-			return binarySearchHeuristic2(q,center,end,newHeuristic,dim);
+			return binarySearchHeuristic2(q,center+1,end,newHeuristic,dim);
 		}
 
 	}
@@ -473,7 +472,7 @@ public class SaveWesteros extends SearchProblem {
 		if(distanceToClosestWalker(dim,q.get(center))+q.get(center).cost>newCostAndHeuristic) {
 			return binarySearchCostAndHeuristic2(q,start,center,newCostAndHeuristic,dim);
 		}else {
-			return binarySearchCostAndHeuristic2(q,center,end,newCostAndHeuristic,dim);
+			return binarySearchCostAndHeuristic2(q,center+1,end,newCostAndHeuristic,dim);
 		}
 
 	}

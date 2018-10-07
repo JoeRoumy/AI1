@@ -15,14 +15,15 @@ public class State {
     
     
     
-    public State(int maxX, int maxY, int glassRemaining, int walkersLeft) {
+    public State(int maxX, int maxY, int glassRemaining,  ArrayList<Integer> walkers) {
         this.direction = Direction.N;
         this.x = maxX - 1;
         this.y = maxY - 1;
         this.glassRemaining = glassRemaining;
-        this.walkersLeft = walkersLeft;
+        this.walkersLeft = walkers.size();
         this.isGoal = walkersLeft == 0;
         this.totalGlassUsed = 0;
+        this.walkerPositions = walkers;
     }
     
     public State(Direction direction, int x, int y, int glassRemaining, int totGlass, int walkersLeft, ArrayList<Integer> walkerPositions ) {

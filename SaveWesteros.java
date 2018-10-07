@@ -211,7 +211,7 @@ public class SaveWesteros extends SearchProblem {
 	
     // to generate the child nodes of a given node
     private Snode[] expand(Snode node, Grid grid) {
-        Snode [] newNodes = new Snode[operators.length];
+        Snode [] newNodes = new Snode[Operator.values().length];
         expandedNodes++;
         
         boolean isVALID = true;

@@ -43,7 +43,7 @@ public class SaveWesteros extends SearchProblem {
     private ArrayList<Snode> BF(ArrayList<Snode>nodes,Snode[] n) {
         for(int i = n.length-1; i > -1; i--) {
         	if(n[i]!=null)
-            nodes.add(nodes.size()-1,n[i]);
+            nodes.add(nodes.size(),n[i]);
         }
         return nodes;
     }
@@ -72,8 +72,13 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> UC(ArrayList<Snode>nodes,Snode[] n) {
 		
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
+        	if(n[i]!=null) {
+        		if(nodes.size()==0) {
+        			nodes.add(n[i]);
+        			continue;
+        		}
 			nodes.add(binarySearchCost(nodes,0,nodes.size()-1, n[i].cost),n[i]);
+        	}
 		}
 	
 		return nodes;
@@ -84,8 +89,13 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> GR1(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
+        	if(n[i]!=null) {
+        		if(nodes.size()==0) {
+        			nodes.add(n[i]);
+        			continue;
+        		}
 			nodes.add(binarySearchHeuristic1(nodes,0,nodes.size()-1, n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
+        	}
 		}
 	
 		return nodes;
@@ -96,9 +106,14 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> AS1(ArrayList<Snode>nodes,Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
+        	if(n[i]!=null) {
+        		if(nodes.size()==0) {
+        			nodes.add(n[i]);
+        			continue;
+        		}
 			nodes.add(binarySearchCostAndHeuristic1(nodes,0,nodes.size()-1, n[i].cost+n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
-		}
+		
+        	}}
 	
 		return nodes;
 
@@ -108,8 +123,13 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> GR2(ArrayList<Snode>nodes,Snode[] n, int dim) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
+        	if(n[i]!=null) {
+        		if(nodes.size()==0) {
+        			nodes.add(n[i]);
+        			continue;
+        		}
 			nodes.add(binarySearchHeuristic2(nodes,0,nodes.size()-1,distanceToClosestWalker(dim,n[i]),dim),n[i]);
+        	}
 		}
 	
 		return nodes;
@@ -120,8 +140,13 @@ public class SaveWesteros extends SearchProblem {
 	private ArrayList<Snode> AS2(ArrayList<Snode>nodes,Snode[] n, int dim) {
 
 		for (int i = 0; i < n.length; i++) {
-        	if(n[i]!=null)
+        	if(n[i]!=null) {
+        		if(nodes.size()==0) {
+        			nodes.add(n[i]);
+        			continue;
+        		}
 			nodes.add(binarySearchCostAndHeuristic2(nodes,0,nodes.size()-1, n[i].cost+distanceToClosestWalker(dim,n[i]),dim),n[i]);
+        	}
 		}
 	
 		return nodes;
@@ -136,10 +161,17 @@ public class SaveWesteros extends SearchProblem {
 
 		 for (int i = 0; leaf == null; i++) {
 			leaf = SearchHelper(grid, strategy, i);
+			if(strategy!="ID")
+				break;
 			System.out.println("Iteration number: "+i+2);
 		}
 		
 		 ArrayList<Snode> solution = new ArrayList<>(50);
+		 
+		 if (leaf == null) {
+			System.out.println("Nope, expanded nodes = "+expandedNodes);
+			return null;
+		}
 		 
 		 solution = GenerateSolution(solution, leaf);
 		 
@@ -361,12 +393,16 @@ public class SaveWesteros extends SearchProblem {
 	
 	// to insert in ucs
 	private int binarySearchCost(ArrayList<Snode> q, int start, int end, int newCost) {
+		
 		//base case
 		if(start == end) {
 			return start;
 		}
+		System.out.print("start:" + start);
+		System.out.print("end:"+end);
 		//calculate mid of list
 		int center = (end+start)/2;
+		System.out.println("center:"+center);
 		//redirect to left or right half
 		if(q.get(center).cost>newCost) {
 			return binarySearchCost(q,start,center,newCost);

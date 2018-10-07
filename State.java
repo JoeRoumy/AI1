@@ -15,7 +15,7 @@ public class State {
     
     
     
-    public State(int maxX, int maxY, int glassRemaining, int heuristic, int walkersLeft) {
+    public State(int maxX, int maxY, int glassRemaining, int walkersLeft) {
         this.direction = Direction.N;
         this.x = maxX - 1;
         this.y = maxY - 1;
@@ -24,7 +24,7 @@ public class State {
         this.isGoal = walkersLeft == 0;
     }
     
-    public State(Direction direction, int x, int y, int glassRemaining, int heuristic, int walkersLeft ) {
+    public State(Direction direction, int x, int y, int glassRemaining, int walkersLeft ) {
         this.direction = direction;
         this.x = x;
         this.y = y;

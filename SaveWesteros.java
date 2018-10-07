@@ -280,6 +280,10 @@ public class SaveWesteros extends SearchProblem {
                         break;
                     }
                     
+                    if(newPosition == grid.stonePosition()) {
+                    	newGlassCount = grid.glassCapacity;
+                    }
+                    
                     break;
                 case RotLeft :
                     newDirection = directions[(currentDirection.ordinal() - 1) % directions.length];

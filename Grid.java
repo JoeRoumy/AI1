@@ -19,6 +19,8 @@ public class Grid {
     private static ArrayList<Integer> Opositions;
     private static int Sposition;
     
+    public int glassCapacity;
+    
     public Grid(int x) {
         grid = new char[minDimension][minDimension];
         gridLength = minDimension;
@@ -32,7 +34,7 @@ public class Grid {
         grid[2][2] = 'W';
         grid[2][3] = 'O';
         grid[3][1] = 'O';
-        
+        glassCapacity = 3;
         
     }
     
@@ -40,6 +42,7 @@ public class Grid {
     public Grid(){
         gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
         gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
+        
         johnsx = gridWidth-1;
         johnsy = gridLength-1;
         
@@ -47,7 +50,8 @@ public class Grid {
         generatePositions(gridLength, gridWidth);
         int WpositionSize = Wpositions.size();
         int OpositionSize = Opositions.size();
-        
+        glassCapacity  = ThreadLocalRandom.current().nextInt(1,WpositionSize+1);
+
         
         // generating an empty grid then populating it
         grid = new char [gridLength][gridWidth];

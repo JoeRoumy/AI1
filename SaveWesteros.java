@@ -178,14 +178,14 @@ public class SaveWesteros extends SearchProblem {
 			}
 
 			switch (strategy) {
-			case "BF":	queue = BF(queue,expand(thisNode));		break;
-			case "DF":	queue = DF(queue,expand(thisNode));		break;
-			case "ID":	queue = ID(queue,expand(thisNode),currentDepth);		break;
-			case "UC":	queue = UC(queue,expand(thisNode));		break;
-			case "GR1":	queue = GR1(queue,expand(thisNode));		break;
-			case "AS1":	queue = AS1(queue,expand(thisNode));		break;
-			case "GR2":	queue = GR2(queue,expand(thisNode),grid.johnsx);		break;
-			case "AS2":	queue = AS2(queue,expand(thisNode),grid.johnsx);		break;
+			case "BF":	queue = BF(queue,expand(thisNode,grid));		break;
+			case "DF":	queue = DF(queue,expand(thisNode,grid));		break;
+			case "ID":	queue = ID(queue,expand(thisNode,grid),currentDepth);		break;
+			case "UC":	queue = UC(queue,expand(thisNode,grid));		break;
+			case "GR1":	queue = GR1(queue,expand(thisNode,grid));		break;
+			case "AS1":	queue = AS1(queue,expand(thisNode,grid));		break;
+			case "GR2":	queue = GR2(queue,expand(thisNode,grid),grid.johnsx);		break;
+			case "AS2":	queue = AS2(queue,expand(thisNode,grid),grid.johnsx);		break;
 			default: System.out.println("Invalid search strategy "+strategy);			return null;
 			}
 		

@@ -35,6 +35,7 @@ public class SaveWesteros extends SearchProblem {
 	
 	public SaveWesteros(State initstate) {
 		this.initState = initstate;
+		operators = Operator.values();
 	}
 	
 	

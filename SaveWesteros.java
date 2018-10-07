@@ -247,7 +247,6 @@ public class SaveWesteros extends SearchProblem {
         Snode [] newNodes = new Snode[Operator.values().length];
         expandedNodes++;
         
-        boolean isVALID = true;
         
         int gridLength = grid.gridLength;
         int gridWidth = grid.gridWidth;
@@ -281,7 +280,8 @@ public class SaveWesteros extends SearchProblem {
             int newGlassCount = currentGlassCount;
             int newWalkerCount = currentGlassCount;
             int newTotalGlassUsed = currentState.totalGlassUsed;
-            
+            boolean isVALID = true;
+
             Operator myOperator = operators[i];
             switch (myOperator) {
                 case Stab:
@@ -352,7 +352,7 @@ public class SaveWesteros extends SearchProblem {
             }
             newNodes[i] = newNode;
         }        
-        
+        System.out.println(newNodes[0].operator);
         return newNodes;
     }
     
@@ -398,11 +398,8 @@ public class SaveWesteros extends SearchProblem {
 		if(start == end) {
 			return start;
 		}
-		System.out.print("start:" + start);
-		System.out.print("end:"+end);
 		//calculate mid of list
 		int center = (end+start)/2;
-		System.out.println("center:"+center);
 		//redirect to left or right half
 		if(q.get(center).cost>newCost) {
 			return binarySearchCost(q,start,center,newCost);

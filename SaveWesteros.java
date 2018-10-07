@@ -29,7 +29,12 @@ public class SaveWesteros extends SearchProblem {
 	public static void main(String[] args) {
 		Grid grid = new Grid(666);
 		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
-
+		SaveWesteros ai = new SaveWesteros(new State(grid.gridWidth, grid.gridLength, grid.glassCapacity, grid.getPositions().size()));
+		ai.Search(grid, "UC", true);
+	}
+	
+	public SaveWesteros(State initstate) {
+		this.initState = initstate;
 	}
 	
 	

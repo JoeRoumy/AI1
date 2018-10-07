@@ -35,6 +35,16 @@ public class Grid {
         grid[2][3] = 'O';
         grid[3][1] = 'O';
         glassCapacity = 3;
+        Wpositions = new ArrayList<>();
+        Wpositions.add(0);
+        Wpositions.add(2);
+        Wpositions.add(5);
+        Wpositions.add(7);
+        Wpositions.add(10);
+        Opositions = new ArrayList<>();
+        Wpositions.add(11);
+        Wpositions.add(13);
+        Sposition = 8;
         
     }
     

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class State {
     
-    public enum Direction {N, S, W, E};
+    //    public enum Direction {N, S, W, E};
     
     public Direction direction;
     public int x;
@@ -24,14 +24,16 @@ public class State {
         this.isGoal = walkersLeft == 0;
     }
     
-    public State(Direction direction, int x, int y, int glassRemaining, int walkersLeft ) {
+    public State(Direction direction, int x, int y, int glassRemaining, int walkersLeft, ArrayList<Integer> walkerPositions ) {
         this.direction = direction;
         this.x = x;
         this.y = y;
         this.glassRemaining = glassRemaining;
         this.walkersLeft = walkersLeft;
         this. isGoal = walkersLeft == 0;
+        this.walkerPositions = walkerPositions;
         
     }
     
 }
+

@@ -204,16 +204,126 @@ public class SaveWesteros extends SearchProblem {
 		
 	}
 	
-	// to generate the child nodes of a given node
-	private Snode[] expand(Snode node) {
-		Snode[] newNodes = new Snode[operators.length];
-		expandedNodes++;
-		
-		// TODO Auto-generated method stub
+    // to generate the child nodes of a given node
+    private Snode[] expand(Snode node, Grid grid) {
+        Snode [] newNodes = new Snode[operators.length];
+        expandedNodes++;
+        
+        boolean isVALID = true;
+        
+        int gridLength = grid.gridLength;
+        int gridWidth = grid.gridWidth;
+        ArrayList<Integer> obstaclePositions = grid.obstaclePositions();
+        
+        int currentDepth = node.depth;
+        State currentState = node.state;
+        Direction currentDirection = currentState.direction;
+        int currentX = currentState.x;
+        int currentY = currentState.y;
+        int currentPosition = (currentY * gridWidth) + currentX;
+        int currentGlassCount = currentState.glassRemaining;
+        int currentWalkerCount = currentState.walkersLeft;
+        ArrayList<Integer> currentWalkerPositions = currentState.walkerPositions;
+        Direction [] directions =  currentDirection.values();
+        
+        ArrayList<Integer> adjacentWalkers = new ArrayList<Integer>();
+        if(currentWalkerPositions.contains(currentPosition + 1))
+            adjacentWalkers.add(currentPosition + 1);
+        if(currentWalkerPositions.contains(currentPosition - 1))
+            adjacentWalkers.add(currentPosition - 1);
+        if(currentWalkerPositions.contains(currentPosition + gridWidth))
+            adjacentWalkers.add(currentPosition + gridWidth);
+        if(currentWalkerPositions.contains(currentPosition - gridWidth))
+            adjacentWalkers.add(currentPosition - gridWidth);
+        
+        for(int i = 0; i < newNodes.length; i++) {
+            Direction newDirection;
+            int newX;
+            int newY;
+            int newGlassCount = currentGlassCount;
+            int newWalkerCount = currentGlassCount;
+            
+            Operator myOperator = operators[i];
+            switch (myOperator) {
+                case Stab:
+                    newDirection = currentDirection;
+                    newX = currentX;
+                    newY = currentY;
+                    if(currentGlassCount == 0 || adjacentWalkers.size() == 0 ) {
+                        isVALID = false;
+                        break;
+                    }
+                    newGlassCount = currentGlassCount - 1;
+                    newWalkerCount = currentWalkerCount - adjacentWalkers.size();
+                    for(int j = 0; j < adjacentWalkers.size(); j++) {
+                        int index = currentWalkerPositions.indexOf(adjacentWalkers.get(j));
+                        currentWalkerPositions.set(index,-1 );
+                    }
+                    
+                    break;
+                case Forward:
+                    newDirection = currentDirection;
+                    switch(currentDirection) {
+                        case N : newY = currentY + 1; newX = currentX; break;
+                        case E : newX = currentX + 1; newY = currentY; break;
+                        case S : newY = currentY - 1; newX = currentX; break;
+                        case W : newX = currentX - 1; newY = currentY; break;
+                        default: newX = newY = 0; break;
+                    }
+                    newGlassCount = currentGlassCount;
+                    newWalkerCount = currentWalkerCount;
+                    int newPosition = (newY * gridWidth) + newX;
+                    if(newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridLength || currentWalkerPositions.contains(newPosition) || obstaclePositions.contains(newPosition)) {
+                        isVALID = false;
+                        break;
+                    }
+                    
+                    break;
+                case RotLeft :
+                    newDirection = directions[(currentDirection.ordinal() - 1) % directions.length];
+                    newX = currentX;
+                    newY = currentY;
+                    newGlassCount = currentGlassCount;
+                    newWalkerCount = currentWalkerCount;
+                    break;
+                case RotRight:
+                    newDirection = directions[(currentDirection.ordinal() + 1)  % directions.length];
+                    newX = currentX;
+                    newY = currentY;
+                    newGlassCount = currentGlassCount;
+                    newWalkerCount = currentWalkerCount;
+                    break;
+                default:
+                    newDirection = null;
+                    newX = newY = newGlassCount = newWalkerCount = 0;
+                    isVALID = false;
+                    break;
+            }
+            Snode newNode;
+            if(isVALID == false) {
+                newNode = null;
+            }
+            if(isVALID == true) {
+                int newCost = node.cost + costFunction(myOperator);
+                State newState = new State(newDirection, newX, newY, newGlassCount, newWalkerCount, currentWalkerPositions );
+                newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
+                newNodes[i] = newNode;
+            }
+        }
+        
+        // TODO Auto-generated method stub
+        
+        
+        return newNodes;
+    }
+    
+    public static int costFunction(Operator myOperator) {
+        switch(myOperator) {
+            case Stab: return 5;
+            default: return 7;
+        }
+    }
 
-		
-		return newNodes;
-	}
 	
 	// to reflect the dequeueing on the grid
 	private boolean applyToGrid(Grid grid, Snode step) {

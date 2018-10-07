@@ -12,8 +12,17 @@ public class Grid {
     public int johnsx = minDimension-1;
     public int johnsy = minDimension-1;
     
+    public int gridLength;
+    public int gridWidth;
+    
+    private static ArrayList<Integer> Wpositions;
+    private static ArrayList<Integer> Opositions;
+    private static int Sposition;
+    
     public Grid(int x) {
         grid = new char[minDimension][minDimension];
+        gridLength = minDimension;
+        gridWidth = minDimension;
         grid[3][3] = 'J';
         grid[0][0] = 'W';
         grid[0][2] = 'W';
@@ -29,14 +38,15 @@ public class Grid {
     
     
     public Grid(){
-        int gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
-        int gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
+        gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
+        gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
         johnsx = gridWidth-1;
         johnsy = gridLength-1;
         
         //generating random positions of white walkers and dragon stone on the grid
-        ArrayList<Integer> positions = generatePositions(gridLength, gridWidth);
-        int positionSize = positions.size();
+        generatePositions(gridLength, gridWidth);
+        int WpositionSize = Wpositions.size();
+        int OpositionSize = Opositions.size();
         
         
         // generating an empty grid then populating it
@@ -44,32 +54,56 @@ public class Grid {
         //populating the grid
         grid[gridLength - 1][gridWidth - 1] = 'J';
         
-        for(int i = 0; i < positionSize; i++) {
-            char spot;
-            int currentPosition = positions.get(i);
-            if(i == positionSize - 1)
-                spot = 'S';
-            else {
-                if(currentPosition < 0)
-                    spot = 'O';
-                else spot = 'W';
-            }
-            currentPosition = Math.abs(currentPosition);
+        
+        for(int i = 0; i < WpositionSize; i++) {
+            int currentPosition = Wpositions.get(i);
             int row = currentPosition / gridWidth;
             int column = currentPosition % gridWidth;
-            
-            grid[row][column] = spot;
-            
+            grid[row][column] = 'W';
         }
+        
+        for(int i = 0; i < OpositionSize; i++) {
+            int currentPosition = Opositions.get(i);
+            int row = currentPosition / gridWidth;
+            int column = currentPosition % gridWidth;
+            grid[row][column] = 'O';
+        }
+        
+        int Srow = Sposition / gridWidth;
+        int Scol = Sposition % gridWidth;
+        grid[Srow][Scol] = 'S';
+        
+        
+        
+        //        for(int i = 0; i < WpositionSize; i++) {
+        //            char spot = 'W';
+        //            int currentPosition = Wpositions.get(i);
+        //            if(i == positionSize - 1)
+        //                spot = 'S';
+        //            else {
+        //                if(currentPosition < 0)
+        //                    spot = 'O';
+        //                else spot = 'W';
+        //            }
+        //            currentPosition = Math.abs(currentPosition);
+        //            int row = currentPosition / gridWidth;
+        //            int column = currentPosition % gridWidth;
+        //
+        //            grid[row][column] = spot;
+        //
+        //        }
         
         
         
     }
     
     //returns an arrayList of positions of all white walkers and dragon stone with dragon stone position being the last element of the returned array
-    public static ArrayList<Integer> generatePositions(int length, int width) {
+    public static void generatePositions(int length, int width) {
         
         allPositions = new ArrayList<Integer>();
+        Wpositions = new ArrayList<Integer>();
+        Opositions = new ArrayList<Integer>();
+        
         
         // to be documented...
         int minPosition = 0;
@@ -83,10 +117,11 @@ public class Grid {
             maxPosition = minPosition + offset ;
             int position =  ThreadLocalRandom.current().nextInt(minPosition, maxPosition);
             int isObstacle = ThreadLocalRandom.current().nextInt(0,2);
-            System.out.println("isObstacle " + isObstacle);
+            
+            allPositions.add(position);
             if(isObstacle == 0)
-                allPositions.add(position);
-            else allPositions.add(-1 * position);
+                Wpositions.add(position);
+            else Opositions.add(position);
             minPosition = position + 1;
         }
         boolean isInArray = true;
@@ -96,8 +131,8 @@ public class Grid {
             isInArray =  Arrays.asList(allPositions).contains(stonePosition);
         }while(isInArray == true);
         
-        allPositions.add(stonePosition);
-        return allPositions;
+        Sposition = stonePosition;
+        
     }
     
     public static void main(String [] args) {
@@ -112,8 +147,15 @@ public class Grid {
     }
     
     public ArrayList<Integer> getPositions(){
-        return allPositions;
+        return Wpositions;
     }
+    public ArrayList<Integer> obstaclePositions(){
+        return Opositions;
+    }
+    public int stonePosition() {
+        return Sposition;
+    }
+    
     
     
 }

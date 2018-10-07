@@ -292,7 +292,7 @@ public class SaveWesteros extends SearchProblem {
                     
                     break;
                 case RotLeft :
-                    newDirection = directions[(currentDirection.ordinal() - 1) % directions.length];
+                    newDirection = currentDirection.ordinal() == 0 ? directions[directions.length - 1] : directions[currentDirection.ordinal() - 1];
                     newX = currentX;
                     newY = currentY;
                     newGlassCount = currentGlassCount;

@@ -207,14 +207,21 @@ public class SaveWesteros extends SearchProblem {
 		
 		//instantiating the queue
 		queue.add(new Snode(initState));
-			
+		
+		long loop = 0;
 		
 		while (queue.size()>0) {
+			loop++;
 			Snode thisNode = queue.remove(0); 
 			if(thisNode.state.isGoal) {
 				return thisNode;
 			}
-
+			
+			if(loop%50000 == 0) {
+				System.out.println("queue length:"+ queue.size());
+				System.out.println("epanded nodes:"+ expandedNodes);
+			}
+			
 			switch (strategy) {
 			case "BF":	queue = BF(queue,expand(thisNode,grid));		break;
 			case "DF":	queue = DF(queue,expand(thisNode,grid));		break;
@@ -371,13 +378,13 @@ public class SaveWesteros extends SearchProblem {
 			grid.getGrid()[step.state.x][step.state.y] = 'J';
 			return true;
 		case Stab:
-			if(grid.getGrid()[step.state.x+1][step.state.y] == 'W')
+			if(step.state.x+1<grid.gridWidth && grid.getGrid()[step.state.x+1][step.state.y] == 'W')
 				grid.getGrid()[step.state.x+1][step.state.y] = '\u0000';
-			if(grid.getGrid()[step.state.x-1][step.state.y] == 'W')
+			if(step.state.x>0 && grid.getGrid()[step.state.x-1][step.state.y] == 'W')
 				grid.getGrid()[step.state.x-1][step.state.y] = '\u0000';
-			if(grid.getGrid()[step.state.x][step.state.y+1] == 'W')
+			if(step.state.y+1<grid.gridLength && grid.getGrid()[step.state.x][step.state.y+1] == 'W')
 				grid.getGrid()[step.state.x][step.state.y+1] = '\u0000';
-			if(grid.getGrid()[step.state.x][step.state.y-1] == 'W')
+			if(step.state.y>0 && grid.getGrid()[step.state.x][step.state.y-1] == 'W')
 				grid.getGrid()[step.state.x][step.state.y-1] = '\u0000';
 			return true;
 		default:

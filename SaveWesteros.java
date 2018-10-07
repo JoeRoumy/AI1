@@ -184,8 +184,8 @@ public class SaveWesteros extends SearchProblem {
 			case "UC":	queue = UC(queue,expand(thisNode,grid));		break;
 			case "GR1":	queue = GR1(queue,expand(thisNode,grid));		break;
 			case "AS1":	queue = AS1(queue,expand(thisNode,grid));		break;
-			case "GR2":	queue = GR2(queue,expand(thisNode,grid),grid.johnsx);		break;
-			case "AS2":	queue = AS2(queue,expand(thisNode,grid),grid.johnsx);		break;
+			case "GR2":	queue = GR2(queue,expand(thisNode,grid),grid.gridWidth>grid.gridLength?grid.gridWidth:grid.gridLength);		break;
+			case "AS2":	queue = AS2(queue,expand(thisNode,grid),grid.gridWidth>grid.gridLength?grid.gridWidth:grid.gridLength);		break;
 			default: System.out.println("Invalid search strategy "+strategy);			return null;
 			}
 		
@@ -242,6 +242,7 @@ public class SaveWesteros extends SearchProblem {
             int newY;
             int newGlassCount = currentGlassCount;
             int newWalkerCount = currentGlassCount;
+            int newTotalGlassUsed = currentState.totalGlassUsed;
             
             Operator myOperator = operators[i];
             switch (myOperator) {
@@ -254,6 +255,7 @@ public class SaveWesteros extends SearchProblem {
                         break;
                     }
                     newGlassCount = currentGlassCount - 1;
+                    newTotalGlassUsed = currentState.totalGlassUsed+1;
                     newWalkerCount = currentWalkerCount - adjacentWalkers.size();
                     for(int j = 0; j < adjacentWalkers.size(); j++) {
                         int index = currentWalkerPositions.indexOf(adjacentWalkers.get(j));
@@ -299,20 +301,15 @@ public class SaveWesteros extends SearchProblem {
                     isVALID = false;
                     break;
             }
-            Snode newNode;
-            if(isVALID == false) {
-                newNode = null;
-            }
+            Snode newNode = null;
+            
             if(isVALID == true) {
                 int newCost = node.cost + costFunction(myOperator);
-                State newState = new State(newDirection, newX, newY, newGlassCount, newWalkerCount, currentWalkerPositions );
+                State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions );
                 newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
-                newNodes[i] = newNode;
             }
-        }
-        
-        // TODO Auto-generated method stub
-        
+            newNodes[i] = newNode;
+        }        
         
         return newNodes;
     }

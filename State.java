@@ -24,7 +24,7 @@ public class State {
         this.isGoal = walkersLeft == 0;
     }
     
-    public State(Direction direction, int x, int y, int glassRemaining, int walkersLeft, ArrayList<Integer> walkerPositions ) {
+    public State(Direction direction, int x, int y, int glassRemaining, int totGlass, int walkersLeft, ArrayList<Integer> walkerPositions ) {
         this.direction = direction;
         this.x = x;
         this.y = y;
@@ -32,6 +32,7 @@ public class State {
         this.walkersLeft = walkersLeft;
         this. isGoal = walkersLeft == 0;
         this.walkerPositions = walkerPositions;
+        this.totalGlassUsed = totGlass;
         
     }
     

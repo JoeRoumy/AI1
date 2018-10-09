@@ -24,6 +24,8 @@ public class State {
         this.isGoal = walkersLeft == 0;
         this.totalGlassUsed = 0;
         this.walkerPositions = walkers;
+        if(this.isGoal)
+        	System.out.println("goal created!!");
     }
     
     public State(Direction direction, int x, int y, int glassRemaining, int totGlass, int walkersLeft, ArrayList<Integer> walkerPositions ) {
@@ -35,6 +37,8 @@ public class State {
         this. isGoal = walkersLeft == 0;
         this.walkerPositions = walkerPositions;
         this.totalGlassUsed = totGlass;
+        if(this.isGoal)
+        	System.out.println("goal created!!");
         
     }
     

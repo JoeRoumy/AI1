@@ -42,8 +42,8 @@ public class Grid {
         Wpositions.add(7);
         Wpositions.add(10);
         Opositions = new ArrayList<>();
-        Wpositions.add(11);
-        Wpositions.add(13);
+        Opositions.add(11);
+        Opositions.add(13);
         Sposition = 8;
         
     }

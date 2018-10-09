@@ -30,7 +30,7 @@ public class SaveWesteros extends SearchProblem {
 		Grid grid = new Grid(666);
 //		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 		SaveWesteros ai = new SaveWesteros(new State(grid.gridWidth, grid.gridLength, grid.glassCapacity, grid.getPositions()));
-		ai.Search(grid, "UC", true);
+		ai.Search(grid, "BF", true);
 	}
 	
 	public SaveWesteros(State initstate) {
@@ -242,9 +242,14 @@ public class SaveWesteros extends SearchProblem {
 	// to visualize the solution step by step
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
+		System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")+"\n\n");
+
 		for (int i = 1; i < solution.size(); i++) {
 			if(applyToGrid(grid, solution.get(i)))
-			System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+			System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+			System.out.println(solution.get(i).operator+"\n");
+			System.out.print(solution.get(i).state.x+",");
+            System.out.println(solution.get(i).state.y);
 		}
 		
 	}
@@ -267,8 +272,9 @@ public class SaveWesteros extends SearchProblem {
         int currentPosition = (currentY * gridWidth) + currentX;
         int currentGlassCount = currentState.glassRemaining;
         int currentWalkerCount = currentState.walkersLeft;
-        ArrayList<Integer> currentWalkerPositions = currentState.walkerPositions;
-        Direction [] directions =  currentDirection.values();
+        ArrayList<Integer> currentWalkerPositions = new ArrayList<Integer>();
+        currentWalkerPositions.addAll(currentState.walkerPositions);
+        Direction [] directions =  Direction.values();
         
         ArrayList<Integer> adjacentWalkers = new ArrayList<Integer>();
         if(currentWalkerPositions.contains(currentPosition + 1))
@@ -311,15 +317,20 @@ public class SaveWesteros extends SearchProblem {
                 case Forward:
                     newDirection = currentDirection;
                     switch(currentDirection) {
-                        case N : newY = currentY + 1; newX = currentX; break;
+                        case N : newY = currentY - 1; newX = currentX; break;
                         case E : newX = currentX + 1; newY = currentY; break;
-                        case S : newY = currentY - 1; newX = currentX; break;
+                        case S : newY = currentY + 1; newX = currentX; break;
                         case W : newX = currentX - 1; newY = currentY; break;
                         default: newX = newY = 0; break;
                     }
                     newGlassCount = currentGlassCount;
                     newWalkerCount = currentWalkerCount;
                     int newPosition = (newY * gridWidth) + newX;
+                    
+
+//                    System.out.println(obstaclePositions.toString());
+//                    System.out.println(newPosition);
+//                    System.out.println(obstaclePositions.contains(newPosition));
                     if(newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridLength || currentWalkerPositions.contains(newPosition) || obstaclePositions.contains(newPosition)) {
                         isVALID = false;
                         break;
@@ -354,7 +365,7 @@ public class SaveWesteros extends SearchProblem {
             
             if(isVALID == true) {
                 int newCost = node.cost + costFunction(myOperator);
-                State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions );
+                State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions);
                 newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
             }
             newNodes[i] = newNode;
@@ -374,18 +385,18 @@ public class SaveWesteros extends SearchProblem {
 	private boolean applyToGrid(Grid grid, Snode step) {
 		switch(step.operator) {
 		case Forward:
-			grid.getGrid()[step.parent.state.x][step.parent.state.y] = '\u0000';
-			grid.getGrid()[step.state.x][step.state.y] = 'J';
+			grid.getGrid()[step.parent.state.y][step.parent.state.x] = '\u0000';
+			grid.getGrid()[step.state.y][step.state.x] = 'J';
 			return true;
 		case Stab:
-			if(step.state.x+1<grid.gridWidth && grid.getGrid()[step.state.x+1][step.state.y] == 'W')
-				grid.getGrid()[step.state.x+1][step.state.y] = '\u0000';
-			if(step.state.x>0 && grid.getGrid()[step.state.x-1][step.state.y] == 'W')
-				grid.getGrid()[step.state.x-1][step.state.y] = '\u0000';
-			if(step.state.y+1<grid.gridLength && grid.getGrid()[step.state.x][step.state.y+1] == 'W')
-				grid.getGrid()[step.state.x][step.state.y+1] = '\u0000';
-			if(step.state.y>0 && grid.getGrid()[step.state.x][step.state.y-1] == 'W')
-				grid.getGrid()[step.state.x][step.state.y-1] = '\u0000';
+			if(step.state.x+1<grid.gridWidth && grid.getGrid()[step.state.y][step.state.x+1] == 'W')
+				grid.getGrid()[step.state.y][step.state.x+1] = '\u0000';
+			if(step.state.x>0 && grid.getGrid()[step.state.y][step.state.x-1] == 'W')
+				grid.getGrid()[step.state.y][step.state.x-1] = '\u0000';
+			if(step.state.y+1<grid.gridLength && grid.getGrid()[step.state.y+1][step.state.x] == 'W')
+				grid.getGrid()[step.state.y+1][step.state.x] = '\u0000';
+			if(step.state.y>0 && grid.getGrid()[step.state.y-1][step.state.x] == 'W')
+				grid.getGrid()[step.state.y-1][step.state.x] = '\u0000';
 			return true;
 		default:
 			return false;

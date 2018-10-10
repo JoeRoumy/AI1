@@ -27,7 +27,7 @@ public class Grid {
         gridWidth = minDimension;
         grid[3][3] = 'J';
         grid[0][0] = 'W';
-        grid[0][2] = 'd';
+        grid[0][2] = 'W';
         grid[1][1] = 'W';
         grid[1][3] = 'W';
         grid[2][0] = 'S';
@@ -110,7 +110,8 @@ public class Grid {
     }
     
     //returns an arrayList of positions of all white walkers and dragon stone with dragon stone position being the last element of the returned array
-    public static void generatePositions(int length, int width) {
+    @SuppressWarnings("unlikely-arg-type")
+	public static void generatePositions(int length, int width) {
         
         allPositions = new ArrayList<Integer>();
         Wpositions = new ArrayList<Integer>();

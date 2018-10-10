@@ -1,11 +1,11 @@
 import java.util.concurrent.Callable;
 
-public class SearchProblem {
+public abstract class SearchProblem {
 	
 	public Operator[] operators;
 	public State initState;
-	public State[] stateSpace;
-	public Callable goalTest;
-	public Callable pathCost;
 	
+	abstract  Snode[] expand(Snode node, Grid grid);
+	abstract boolean goalTest(State s);
+	abstract int pathCost(Operator o);
 }

@@ -255,9 +255,10 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
     // to generate the child nodes of a given node
-    private Snode[] expand(Snode node, Grid grid) {
+    Snode[] expand(Snode node, Grid grid) {
         Snode [] newNodes = new Snode[Operator.values().length];
         expandedNodes++;
+      
         
         
         int gridLength = grid.gridLength;
@@ -364,7 +365,7 @@ public class SaveWesteros extends SearchProblem {
             Snode newNode = null;
             
             if(isVALID == true) {
-                int newCost = node.cost + costFunction(myOperator);
+                int newCost = node.cost + pathCost(myOperator);
                 State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions);
                 newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
             }
@@ -373,10 +374,11 @@ public class SaveWesteros extends SearchProblem {
         return newNodes;
     }
     
-    public static int costFunction(Operator myOperator) {
+     int pathCost(Operator myOperator) {
         switch(myOperator) {
             case Stab: return 5;
-            default: return 7;
+            case Forward: return 1;
+            default: return 0;
         }
     }
 
@@ -552,6 +554,11 @@ public class SaveWesteros extends SearchProblem {
 		
 		
 		return -1;
+	}
+
+	@Override
+	boolean goalTest(State s) {
+		return ((StateW)s).isGoal;
 	}
 	
 }

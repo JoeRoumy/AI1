@@ -23,156 +23,134 @@ import java.util.Arrays;
 
 public class SaveWesteros extends SearchProblem {
 	
-	public ArrayList<Snode> queue;
-	public int expandedNodes;
+public Grid grid;
 	
 	public static void main(String[] args) {
 		Grid grid = new Grid(666);
 //		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
-		SaveWesteros ai = new SaveWesteros(new State(grid.gridWidth, grid.gridLength, grid.glassCapacity, grid.getPositions()));
+		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
 		ai.Search(grid, "BF", true);
 	}
 	
-	public SaveWesteros(State initstate) {
+	public SaveWesteros(StateW initstate) {
 		this.initState = initstate;
 		operators = Operator.values();
 	}
 	
 	
 	// breadth first enqueueing function
-    private ArrayList<Snode> BF(ArrayList<Snode>nodes,Snode[] n) {
+    void BF(Snode[] n) {
         for(int i = n.length-1; i > -1; i--) {
         	if(n[i]!=null)
-            nodes.add(nodes.size(),n[i]);
+            queue.add(queue.size(),n[i]);
         }
-        return nodes;
     }
 
 	// depth first function
-	private ArrayList<Snode> DF(ArrayList<Snode>nodes,Snode[] n) {
+	void DF(Snode[] n) {
 		for(int i = n.length-1;i>-1;i--) {
         	if(n[i]!=null)
-			nodes.add(0,n[i]);
+			queue.add(0,n[i]);
 		}
-		return nodes;
-
 	}
 
 	// iterative deepening enqueueing function
-	private ArrayList<Snode> ID(ArrayList<Snode>nodes,Snode[] n,int maxDeapth) {
+	void ID(Snode[] n,int maxDeapth) {
 		for(int i = n.length-1;i>-1;i--) {
 			if(n[i] != null && n[i].getDepth()<=maxDeapth)
-					nodes.add(0,n[i]);
+					queue.add(0,n[i]);
 		}
-		return nodes;
-
 	}
 
 	// uniform cost enqueueing function
-	private ArrayList<Snode> UC(ArrayList<Snode>nodes,Snode[] n) {
+	void UC(Snode[] n) {
 		
 		for (int i = 0; i < n.length; i++) {
         	if(n[i]!=null) {
-        		if(nodes.size()==0) {
-        			nodes.add(n[i]);
+        		if(queue.size()==0) {
+        			queue.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchCost(nodes,0,nodes.size()-1, n[i].cost),n[i]);
+			queue.add(binarySearchCost(queue,0,queue.size()-1, n[i].cost),n[i]);
         	}
 		}
 	
-		return nodes;
-
 	}
 
 	// greedy enqueueing function with first heuristic
-	private ArrayList<Snode> GR1(ArrayList<Snode>nodes,Snode[] n) {
+	void GR1(Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
         	if(n[i]!=null) {
-        		if(nodes.size()==0) {
-        			nodes.add(n[i]);
+        		if(queue.size()==0) {
+        			queue.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchHeuristic1(nodes,0,nodes.size()-1, n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
+			queue.add(binarySearchHeuristic1(queue,0,queue.size()-1,((StateW) n[i].state).walkersLeft/(3.0*((StateW) n[i].state).totalGlassUsed)),n[i]);
         	}
 		}
 	
-		return nodes;
 	}
 
 
 	// a star enqueueing function with first heuristic
-	private ArrayList<Snode> AS1(ArrayList<Snode>nodes,Snode[] n) {
+	void AS1(Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
         	if(n[i]!=null) {
-        		if(nodes.size()==0) {
-        			nodes.add(n[i]);
+        		if(queue.size()==0) {
+        			queue.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchCostAndHeuristic1(nodes,0,nodes.size()-1, n[i].cost+n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
+			queue.add(binarySearchCostAndHeuristic1(queue,0,queue.size()-1, n[i].cost+((StateW) n[i].state).walkersLeft/(3.0*((StateW) n[i].state).totalGlassUsed)),n[i]);
 		
         	}}
 	
-		return nodes;
-
 	}
 	
 	// greedy enqueueing function with first heuristic
-	private ArrayList<Snode> GR2(ArrayList<Snode>nodes,Snode[] n, int dim) {
+	void GR2(Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
         	if(n[i]!=null) {
-        		if(nodes.size()==0) {
-        			nodes.add(n[i]);
+        		if(queue.size()==0) {
+        			queue.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchHeuristic2(nodes,0,nodes.size()-1,distanceToClosestWalker(dim,n[i]),dim),n[i]);
+			queue.add(binarySearchHeuristic2(queue,0,queue.size()-1,distanceToClosestWalker(grid.gridLength,n[i]),grid.gridLength),n[i]);
         	}
 		}
 	
-		return nodes;
 	}
 
 
 	// a star enqueueing function with first heuristic
-	private ArrayList<Snode> AS2(ArrayList<Snode>nodes,Snode[] n, int dim) {
+	void AS2(Snode[] n) {
 
 		for (int i = 0; i < n.length; i++) {
         	if(n[i]!=null) {
-        		if(nodes.size()==0) {
-        			nodes.add(n[i]);
+        		if(queue.size()==0) {
+        			queue.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchCostAndHeuristic2(nodes,0,nodes.size()-1, n[i].cost+distanceToClosestWalker(dim,n[i]),dim),n[i]);
+			queue.add(binarySearchCostAndHeuristic2(queue,0,queue.size()-1, n[i].cost+distanceToClosestWalker(grid.gridLength,n[i]),grid.gridLength),n[i]);
         	}
 		}
 	
-		return nodes;
-
 	}
 	
 
 	// control the search and visualization
 	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
-
-		Snode leaf = null;
-
-		 for (int i = 0; leaf == null; i++) {
-			leaf = SearchHelper(grid, strategy, i);
-			if(strategy!="ID")
-				break;
-			System.out.println("Iteration number: "+i+2);
-		}
-		
-		 ArrayList<Snode> solution = new ArrayList<>(50);
+		this.grid = grid;
+		Snode leaf = generalSearch(this, strategy);
 		 
 		 if (leaf == null) {
 			System.out.println("Nope, expanded nodes = "+expandedNodes);
 			return null;
 		}
 		 
+		 ArrayList<Snode> solution = new ArrayList<>(50);
 		 solution = GenerateSolution(solution, leaf);
 		 
 		if(visualize) {
@@ -198,64 +176,22 @@ public class SaveWesteros extends SearchProblem {
 	}
 
 	
-	// helper to search to facilitate looping for id  
-	// switches between the different strategies and handles basic search procedure
-	private Snode SearchHelper(Grid grid, String strategy, int currentDepth) {
-		
-		//initialization
-		queue = new ArrayList<Snode>(500);
-		
-		//instantiating the queue
-		queue.add(new Snode(initState));
-		
-		long loop = 0;
-		
-		while (queue.size()>0) {
-			loop++;
-			Snode thisNode = queue.remove(0); 
-			if(thisNode.state.isGoal) {
-				return thisNode;
-			}
-			
-			if(loop%50000 == 0) {
-				System.out.println("queue length:"+ queue.size());
-				System.out.println("epanded nodes:"+ expandedNodes);
-			}
-			
-			switch (strategy) {
-			case "BF":	queue = BF(queue,expand(thisNode,grid));		break;
-			case "DF":	queue = DF(queue,expand(thisNode,grid));		break;
-			case "ID":	queue = ID(queue,expand(thisNode,grid),currentDepth);		break;
-			case "UC":	queue = UC(queue,expand(thisNode,grid));		break;
-			case "GR1":	queue = GR1(queue,expand(thisNode,grid));		break;
-			case "AS1":	queue = AS1(queue,expand(thisNode,grid));		break;
-			case "GR2":	queue = GR2(queue,expand(thisNode,grid),grid.gridWidth>grid.gridLength?grid.gridWidth:grid.gridLength);		break;
-			case "AS2":	queue = AS2(queue,expand(thisNode,grid),grid.gridWidth>grid.gridLength?grid.gridWidth:grid.gridLength);		break;
-			default: System.out.println("Invalid search strategy "+strategy);			return null;
-			}
-		
-		}
-		return null;
-
-	}
-	
 	// to visualize the solution step by step
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
-		System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")+"\n\n");
-
 		for (int i = 1; i < solution.size(); i++) {
 			if(applyToGrid(grid, solution.get(i)))
-			System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+//				System.out.println(grid.getGrid()[0][2]);
+//			System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")+"\n\n");
 			System.out.println(solution.get(i).operator+"\n");
-			System.out.print(solution.get(i).state.x+",");
-            System.out.println(solution.get(i).state.y);
+			System.out.print(((StateW)solution.get(i).state).x+",");
+            System.out.println(((StateW)solution.get(i).state).y);
 		}
 		
 	}
 	
     // to generate the child nodes of a given node
-    Snode[] expand(Snode node, Grid grid) {
+    Snode[] expand(Snode node) {
         Snode [] newNodes = new Snode[Operator.values().length];
         expandedNodes++;
       
@@ -267,14 +203,14 @@ public class SaveWesteros extends SearchProblem {
         
         int currentDepth = node.depth;
         State currentState = node.state;
-        Direction currentDirection = currentState.direction;
-        int currentX = currentState.x;
-        int currentY = currentState.y;
+        Direction currentDirection = ((StateW)currentState).direction;
+        int currentX = ((StateW)currentState).x;
+        int currentY = ((StateW)currentState).y;
         int currentPosition = (currentY * gridWidth) + currentX;
-        int currentGlassCount = currentState.glassRemaining;
-        int currentWalkerCount = currentState.walkersLeft;
+        int currentGlassCount = ((StateW)currentState).glassRemaining;
+        int currentWalkerCount = ((StateW)currentState).walkersLeft;
         ArrayList<Integer> currentWalkerPositions = new ArrayList<Integer>();
-        currentWalkerPositions.addAll(currentState.walkerPositions);
+        currentWalkerPositions.addAll(((StateW)currentState).walkerPositions);
         Direction [] directions =  Direction.values();
         
         ArrayList<Integer> adjacentWalkers = new ArrayList<Integer>();
@@ -293,7 +229,7 @@ public class SaveWesteros extends SearchProblem {
             int newY;
             int newGlassCount = currentGlassCount;
             int newWalkerCount = currentGlassCount;
-            int newTotalGlassUsed = currentState.totalGlassUsed;
+            int newTotalGlassUsed = ((StateW)currentState).totalGlassUsed;
             boolean isVALID = true;
 
             Operator myOperator = operators[i];
@@ -307,7 +243,7 @@ public class SaveWesteros extends SearchProblem {
                         break;
                     }
                     newGlassCount = currentGlassCount - 1;
-                    newTotalGlassUsed = currentState.totalGlassUsed+1;
+                    newTotalGlassUsed = ((StateW)currentState).totalGlassUsed+1;
                     newWalkerCount = currentWalkerCount - adjacentWalkers.size();
                     for(int j = 0; j < adjacentWalkers.size(); j++) {
                         int index = currentWalkerPositions.indexOf(adjacentWalkers.get(j));
@@ -327,11 +263,6 @@ public class SaveWesteros extends SearchProblem {
                     newGlassCount = currentGlassCount;
                     newWalkerCount = currentWalkerCount;
                     int newPosition = (newY * gridWidth) + newX;
-                    
-
-//                    System.out.println(obstaclePositions.toString());
-//                    System.out.println(newPosition);
-//                    System.out.println(obstaclePositions.contains(newPosition));
                     if(newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridLength || currentWalkerPositions.contains(newPosition) || obstaclePositions.contains(newPosition)) {
                         isVALID = false;
                         break;
@@ -366,7 +297,7 @@ public class SaveWesteros extends SearchProblem {
             
             if(isVALID == true) {
                 int newCost = node.cost + pathCost(myOperator);
-                State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions);
+                State newState = new StateW(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions );
                 newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
             }
             newNodes[i] = newNode;
@@ -387,18 +318,18 @@ public class SaveWesteros extends SearchProblem {
 	private boolean applyToGrid(Grid grid, Snode step) {
 		switch(step.operator) {
 		case Forward:
-			grid.getGrid()[step.parent.state.y][step.parent.state.x] = '\u0000';
-			grid.getGrid()[step.state.y][step.state.x] = 'J';
+			grid.getGrid()[((StateW)step.parent.state).y][((StateW)step.parent.state).x] = '\u0000';
+			grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x] = 'J';
 			return true;
 		case Stab:
-			if(step.state.x+1<grid.gridWidth && grid.getGrid()[step.state.y][step.state.x+1] == 'W')
-				grid.getGrid()[step.state.y][step.state.x+1] = '\u0000';
-			if(step.state.x>0 && grid.getGrid()[step.state.y][step.state.x-1] == 'W')
-				grid.getGrid()[step.state.y][step.state.x-1] = '\u0000';
-			if(step.state.y+1<grid.gridLength && grid.getGrid()[step.state.y+1][step.state.x] == 'W')
-				grid.getGrid()[step.state.y+1][step.state.x] = '\u0000';
-			if(step.state.y>0 && grid.getGrid()[step.state.y-1][step.state.x] == 'W')
-				grid.getGrid()[step.state.y-1][step.state.x] = '\u0000';
+			if(((StateW)step.state).x+1<grid.gridWidth && grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x+1] == 'W')
+				grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x+1] = '\u0000';
+			if(((StateW)step.state).x>0 && grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x-1] == 'W')
+				grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x-1] = '\u0000';
+			if(((StateW)step.state).y+1<grid.gridLength && grid.getGrid()[((StateW)step.state).y+1][((StateW)step.state).x] == 'W')
+				grid.getGrid()[((StateW)step.state).y+1][((StateW)step.state).x] = '\u0000';
+			if(((StateW)step.state).y>0 && grid.getGrid()[((StateW)step.state).y-1][((StateW)step.state).x] == 'W')
+				grid.getGrid()[((StateW)step.state).y-1][((StateW)step.state).x] = '\u0000';
 			return true;
 		default:
 			return false;
@@ -437,7 +368,7 @@ public class SaveWesteros extends SearchProblem {
 		//calculate mid of list
 		int center = (end+start)/2;
 		//redirect to left or right half
-		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)>newHeuristic) {
+		if(((StateW)q.get(center).state).walkersLeft/(3.0*((StateW)q.get(center).state).totalGlassUsed)>newHeuristic) {
 			return binarySearchHeuristic1(q,start,center,newHeuristic);
 		}else {
 			return binarySearchHeuristic1(q,center+1,end,newHeuristic);
@@ -454,7 +385,7 @@ public class SaveWesteros extends SearchProblem {
 		//calculate mid of list
 		int center = (end+start)/2;
 		//redirect to left or right half
-		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
+		if(((StateW)q.get(center).state).walkersLeft/(3.0*((StateW)q.get(center).state).totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
 			return binarySearchCostAndHeuristic1(q,start,center,newCostAndHeuristic);
 		}else {
 			return binarySearchCostAndHeuristic1(q,center+1,end,newCostAndHeuristic);
@@ -498,9 +429,9 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
 	private int distanceToClosestWalker(int dim, Snode node) {		
-		int xs = node.state.x;
-		int ys = node.state.y; 
-		ArrayList<Integer> list = node.state.walkerPositions;
+		int xs = ((StateW)node.state).x;
+		int ys = ((StateW)node.state).y; 
+		ArrayList<Integer> list = ((StateW)node.state).walkerPositions;
 		
 		for (int d = 1; d <= dim; d++)
 		{
@@ -560,5 +491,6 @@ public class SaveWesteros extends SearchProblem {
 	boolean goalTest(State s) {
 		return ((StateW)s).isGoal;
 	}
+
 	
 }

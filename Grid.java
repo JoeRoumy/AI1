@@ -27,11 +27,10 @@ public class Grid {
         gridWidth = minDimension;
         grid[3][3] = 'J';
         grid[0][0] = 'W';
-        grid[0][2] = 'W';
+        grid[0][2] = 'd';
         grid[1][1] = 'W';
         grid[1][3] = 'W';
         grid[2][0] = 'S';
-        grid[2][2] = 'W';
         grid[2][3] = 'O';
         grid[3][1] = 'O';
         glassCapacity = 3;
@@ -40,7 +39,6 @@ public class Grid {
         Wpositions.add(2);
         Wpositions.add(5);
         Wpositions.add(7);
-        Wpositions.add(10);
         Opositions = new ArrayList<>();
         Opositions.add(11);
         Opositions.add(13);

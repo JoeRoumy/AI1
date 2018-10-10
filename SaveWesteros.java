@@ -29,11 +29,11 @@ public class SaveWesteros extends SearchProblem {
 	public static void main(String[] args) {
 		Grid grid = new Grid(666);
 //		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
-		SaveWesteros ai = new SaveWesteros(new State(grid.gridWidth, grid.gridLength, grid.glassCapacity, grid.getPositions()));
-		ai.Search(grid, "BF", true);
+		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, grid.glassCapacity, grid.getPositions()));
+		ai.Search(grid, "UC", true);
 	}
 	
-	public SaveWesteros(State initstate) {
+	public SaveWesteros(StateW initstate) {
 		this.initState = initstate;
 		operators = Operator.values();
 	}
@@ -94,7 +94,7 @@ public class SaveWesteros extends SearchProblem {
         			nodes.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchHeuristic1(nodes,0,nodes.size()-1, n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
+			nodes.add(binarySearchHeuristic1(nodes,0,nodes.size()-1,((StateW) n[i].state).walkersLeft/(3.0*((StateW) n[i].state).totalGlassUsed)),n[i]);
         	}
 		}
 	
@@ -111,7 +111,7 @@ public class SaveWesteros extends SearchProblem {
         			nodes.add(n[i]);
         			continue;
         		}
-			nodes.add(binarySearchCostAndHeuristic1(nodes,0,nodes.size()-1, n[i].cost+n[i].state.walkersLeft/(3.0*n[i].state.totalGlassUsed)),n[i]);
+			nodes.add(binarySearchCostAndHeuristic1(nodes,0,nodes.size()-1, n[i].cost+((StateW) n[i].state).walkersLeft/(3.0*((StateW) n[i].state).totalGlassUsed)),n[i]);
 		
         	}}
 	
@@ -213,7 +213,7 @@ public class SaveWesteros extends SearchProblem {
 		while (queue.size()>0) {
 			loop++;
 			Snode thisNode = queue.remove(0); 
-			if(thisNode.state.isGoal) {
+			if(((StateW)thisNode.state).isGoal) {
 				return thisNode;
 			}
 			
@@ -242,14 +242,9 @@ public class SaveWesteros extends SearchProblem {
 	// to visualize the solution step by step
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
-		System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")+"\n\n");
-
 		for (int i = 1; i < solution.size(); i++) {
 			if(applyToGrid(grid, solution.get(i)))
-			System.out.print(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
-			System.out.println(solution.get(i).operator+"\n");
-			System.out.print(solution.get(i).state.x+",");
-            System.out.println(solution.get(i).state.y);
+			System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 		}
 		
 	}
@@ -266,15 +261,14 @@ public class SaveWesteros extends SearchProblem {
         
         int currentDepth = node.depth;
         State currentState = node.state;
-        Direction currentDirection = currentState.direction;
-        int currentX = currentState.x;
-        int currentY = currentState.y;
+        Direction currentDirection = ((StateW)currentState).direction;
+        int currentX = ((StateW)currentState).x;
+        int currentY = ((StateW)currentState).y;
         int currentPosition = (currentY * gridWidth) + currentX;
-        int currentGlassCount = currentState.glassRemaining;
-        int currentWalkerCount = currentState.walkersLeft;
-        ArrayList<Integer> currentWalkerPositions = new ArrayList<Integer>();
-        currentWalkerPositions.addAll(currentState.walkerPositions);
-        Direction [] directions =  Direction.values();
+        int currentGlassCount = ((StateW)currentState).glassRemaining;
+        int currentWalkerCount = ((StateW)currentState).walkersLeft;
+        ArrayList<Integer> currentWalkerPositions = ((StateW)currentState).walkerPositions;
+        Direction [] directions =  currentDirection.values();
         
         ArrayList<Integer> adjacentWalkers = new ArrayList<Integer>();
         if(currentWalkerPositions.contains(currentPosition + 1))
@@ -292,7 +286,7 @@ public class SaveWesteros extends SearchProblem {
             int newY;
             int newGlassCount = currentGlassCount;
             int newWalkerCount = currentGlassCount;
-            int newTotalGlassUsed = currentState.totalGlassUsed;
+            int newTotalGlassUsed = ((StateW)currentState).totalGlassUsed;
             boolean isVALID = true;
 
             Operator myOperator = operators[i];
@@ -306,7 +300,7 @@ public class SaveWesteros extends SearchProblem {
                         break;
                     }
                     newGlassCount = currentGlassCount - 1;
-                    newTotalGlassUsed = currentState.totalGlassUsed+1;
+                    newTotalGlassUsed = ((StateW)currentState).totalGlassUsed+1;
                     newWalkerCount = currentWalkerCount - adjacentWalkers.size();
                     for(int j = 0; j < adjacentWalkers.size(); j++) {
                         int index = currentWalkerPositions.indexOf(adjacentWalkers.get(j));
@@ -317,20 +311,15 @@ public class SaveWesteros extends SearchProblem {
                 case Forward:
                     newDirection = currentDirection;
                     switch(currentDirection) {
-                        case N : newY = currentY - 1; newX = currentX; break;
+                        case N : newY = currentY + 1; newX = currentX; break;
                         case E : newX = currentX + 1; newY = currentY; break;
-                        case S : newY = currentY + 1; newX = currentX; break;
+                        case S : newY = currentY - 1; newX = currentX; break;
                         case W : newX = currentX - 1; newY = currentY; break;
                         default: newX = newY = 0; break;
                     }
                     newGlassCount = currentGlassCount;
                     newWalkerCount = currentWalkerCount;
                     int newPosition = (newY * gridWidth) + newX;
-                    
-
-//                    System.out.println(obstaclePositions.toString());
-//                    System.out.println(newPosition);
-//                    System.out.println(obstaclePositions.contains(newPosition));
                     if(newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridLength || currentWalkerPositions.contains(newPosition) || obstaclePositions.contains(newPosition)) {
                         isVALID = false;
                         break;
@@ -365,7 +354,7 @@ public class SaveWesteros extends SearchProblem {
             
             if(isVALID == true) {
                 int newCost = node.cost + costFunction(myOperator);
-                State newState = new State(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions);
+                State newState = new StateW(newDirection, newX, newY, newGlassCount,newTotalGlassUsed, newWalkerCount, currentWalkerPositions );
                 newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
             }
             newNodes[i] = newNode;
@@ -385,18 +374,18 @@ public class SaveWesteros extends SearchProblem {
 	private boolean applyToGrid(Grid grid, Snode step) {
 		switch(step.operator) {
 		case Forward:
-			grid.getGrid()[step.parent.state.y][step.parent.state.x] = '\u0000';
-			grid.getGrid()[step.state.y][step.state.x] = 'J';
+			grid.getGrid()[((StateW)step.parent.state).x][((StateW)step.parent.state).y] = '\u0000';
+			grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y] = 'J';
 			return true;
 		case Stab:
-			if(step.state.x+1<grid.gridWidth && grid.getGrid()[step.state.y][step.state.x+1] == 'W')
-				grid.getGrid()[step.state.y][step.state.x+1] = '\u0000';
-			if(step.state.x>0 && grid.getGrid()[step.state.y][step.state.x-1] == 'W')
-				grid.getGrid()[step.state.y][step.state.x-1] = '\u0000';
-			if(step.state.y+1<grid.gridLength && grid.getGrid()[step.state.y+1][step.state.x] == 'W')
-				grid.getGrid()[step.state.y+1][step.state.x] = '\u0000';
-			if(step.state.y>0 && grid.getGrid()[step.state.y-1][step.state.x] == 'W')
-				grid.getGrid()[step.state.y-1][step.state.x] = '\u0000';
+			if(((StateW)step.state).x+1<grid.gridWidth && grid.getGrid()[((StateW)step.state).x+1][((StateW)step.state).y] == 'W')
+				grid.getGrid()[((StateW)step.state).x+1][((StateW)step.state).y] = '\u0000';
+			if(((StateW)step.state).x>0 && grid.getGrid()[((StateW)step.state).x-1][((StateW)step.state).y] == 'W')
+				grid.getGrid()[((StateW)step.state).x-1][((StateW)step.state).y] = '\u0000';
+			if(((StateW)step.state).y+1<grid.gridLength && grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y+1] == 'W')
+				grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y+1] = '\u0000';
+			if(((StateW)step.state).y>0 && grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y-1] == 'W')
+				grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y-1] = '\u0000';
 			return true;
 		default:
 			return false;
@@ -435,7 +424,7 @@ public class SaveWesteros extends SearchProblem {
 		//calculate mid of list
 		int center = (end+start)/2;
 		//redirect to left or right half
-		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)>newHeuristic) {
+		if(((StateW)q.get(center).state).walkersLeft/(3.0*((StateW)q.get(center).state).totalGlassUsed)>newHeuristic) {
 			return binarySearchHeuristic1(q,start,center,newHeuristic);
 		}else {
 			return binarySearchHeuristic1(q,center+1,end,newHeuristic);
@@ -452,7 +441,7 @@ public class SaveWesteros extends SearchProblem {
 		//calculate mid of list
 		int center = (end+start)/2;
 		//redirect to left or right half
-		if(q.get(center).state.walkersLeft/(3.0*q.get(center).state.totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
+		if(((StateW)q.get(center).state).walkersLeft/(3.0*((StateW)q.get(center).state).totalGlassUsed)+q.get(center).cost>newCostAndHeuristic) {
 			return binarySearchCostAndHeuristic1(q,start,center,newCostAndHeuristic);
 		}else {
 			return binarySearchCostAndHeuristic1(q,center+1,end,newCostAndHeuristic);
@@ -496,9 +485,9 @@ public class SaveWesteros extends SearchProblem {
 	}
 	
 	private int distanceToClosestWalker(int dim, Snode node) {		
-		int xs = node.state.x;
-		int ys = node.state.y; 
-		ArrayList<Integer> list = node.state.walkerPositions;
+		int xs = ((StateW)node.state).x;
+		int ys = ((StateW)node.state).y; 
+		ArrayList<Integer> list = ((StateW)node.state).walkerPositions;
 		
 		for (int d = 1; d <= dim; d++)
 		{

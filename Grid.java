@@ -33,7 +33,7 @@ public class Grid {
         grid[2][0] = 'S';
         grid[2][3] = 'O';
         grid[3][1] = 'O';
-        glassCapacity = 3;
+        glassCapacity = 2;
         Wpositions = new ArrayList<>();
         Wpositions.add(0);
         Wpositions.add(2);
@@ -148,12 +148,12 @@ public class Grid {
         
     }
     
-    public static void main(String [] args) {
-        Grid myGrid = new Grid();
-        
-        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
-        
-    }
+//    public static void main(String [] args) {
+//        Grid myGrid = new Grid();
+//        
+//        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
+//        
+//    }
     
     public char [][] getGrid(){
         return this.grid;

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /*
@@ -28,7 +29,7 @@ public Grid grid;
 		Grid grid = new Grid(666);
 //		System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
-		ai.Search(grid, "BF", true);
+		ai.Search(grid, "GR1", true);
 	}
 	
 	public SaveWesteros(StateW initstate) {
@@ -179,12 +180,22 @@ public Grid grid;
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
 
 		for (int i = 1; i < solution.size(); i++) {
-			if(applyToGrid(grid, solution.get(i)))
+			if(applyToGrid(grid, solution.get(i))) {
 //				System.out.println(grid.getGrid()[0][2]);
-//			System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")+"\n\n");
-			System.out.println(solution.get(i).operator+"\n");
+				String prnt="";
+				for (int j = 0; j < grid.gridWidth; j++) {
+					for (int j2 = 0; j2 < grid.gridWidth; j2++) {
+						prnt += grid.getGrid()[grid.gridWidth-j2-1][j]+",";
+
+					}
+					prnt+="]\n[";
+				}
+			System.out.println("["+prnt+"\n\n");	
+			}
+			System.out.print(solution.get(i).operator+"\n");
 			System.out.print(((StateW)solution.get(i).state).x+",");
             System.out.println(((StateW)solution.get(i).state).y);
+            System.out.println(((StateW)solution.get(i).state).walkerPositions+"\n-------------------\n");
 		}
 		
 	}
@@ -208,22 +219,23 @@ public Grid grid;
         int currentPosition = (currentY * gridWidth) + currentX;
         int currentGlassCount = ((StateW)currentState).glassRemaining;
         int currentWalkerCount = ((StateW)currentState).walkersLeft;
-        ArrayList<Integer> currentWalkerPositions = new ArrayList<Integer>();
-        currentWalkerPositions.addAll(((StateW)currentState).walkerPositions);
+       
         Direction [] directions =  Direction.values();
         
         ArrayList<Integer> adjacentWalkers = new ArrayList<Integer>();
-        if(currentWalkerPositions.contains(currentPosition + 1))
+        if((currentPosition%gridWidth!=gridWidth-1)&&((StateW)currentState).walkerPositions.contains(currentPosition + 1))
             adjacentWalkers.add(currentPosition + 1);
-        if(currentWalkerPositions.contains(currentPosition - 1))
+        if((currentPosition%gridWidth!=0)&&((StateW)currentState).walkerPositions.contains(currentPosition - 1))
             adjacentWalkers.add(currentPosition - 1);
-        if(currentWalkerPositions.contains(currentPosition + gridWidth))
+        if(((StateW)currentState).walkerPositions.contains(currentPosition + gridWidth))
             adjacentWalkers.add(currentPosition + gridWidth);
-        if(currentWalkerPositions.contains(currentPosition - gridWidth))
+        if(((StateW)currentState).walkerPositions.contains(currentPosition - gridWidth))
             adjacentWalkers.add(currentPosition - gridWidth);
         
         for(int i = 0; i < newNodes.length; i++) {
-            Direction newDirection;
+        	 ArrayList<Integer> currentWalkerPositions = new ArrayList<Integer>();
+             currentWalkerPositions.addAll(((StateW)currentState).walkerPositions);
+        	Direction newDirection;
             int newX;
             int newY;
             int newGlassCount = currentGlassCount;
@@ -246,7 +258,8 @@ public Grid grid;
                     newWalkerCount = currentWalkerCount - adjacentWalkers.size();
                     for(int j = 0; j < adjacentWalkers.size(); j++) {
                         int index = currentWalkerPositions.indexOf(adjacentWalkers.get(j));
-                        currentWalkerPositions.set(index,-1 );
+//                        currentWalkerPositions.set(index,-1 );
+                        currentWalkerPositions.remove(index);
                     }
                     
                     break;
@@ -279,13 +292,13 @@ public Grid grid;
                     newGlassCount = currentGlassCount;
                     newWalkerCount = currentWalkerCount;
                     break;
-                case RotRight:
-                    newDirection = directions[(currentDirection.ordinal() + 1)  % directions.length];
-                    newX = currentX;
-                    newY = currentY;
-                    newGlassCount = currentGlassCount;
-                    newWalkerCount = currentWalkerCount;
-                    break;
+//                case RotRight:
+//                    newDirection = directions[(currentDirection.ordinal() + 1)  % directions.length];
+//                    newX = currentX;
+//                    newY = currentY;
+//                    newGlassCount = currentGlassCount;
+//                    newWalkerCount = currentWalkerCount;
+//                    break;
                 default:
                     newDirection = null;
                     newX = newY = newGlassCount = newWalkerCount = 0;
@@ -306,17 +319,46 @@ public Grid grid;
     
      int pathCost(Operator myOperator) {
         switch(myOperator) {
-            case Stab: return 5;
-            case Forward: return 1;
-            default: return 0;
+            case Stab: return 6;
+            case Forward: return 2;
+            default: return 1;
         }
     }
 
+	
+//	// to reflect the dequeueing on the grid
+//	private boolean applyToGrid(Grid grid, Snode step) {
+//		switch(step.operator) {
+//		case Forward:
+//			if(((StateW)step.parent.state).y*grid.gridWidth+((StateW)step.parent.state).x == grid.stonePosition())
+//				grid.getGrid()[((StateW)step.parent.state).x][((StateW)step.parent.state).y] = 'S';
+//			else
+//			grid.getGrid()[((StateW)step.parent.state).x][((StateW)step.parent.state).y] = '\u0000';
+//			grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y] = 'J';
+//			return true;
+//		case Stab:
+//			if(((StateW)step.state).x+1<grid.gridWidth && grid.getGrid()[((StateW)step.state).x+1][((StateW)step.state).y] == 'W')
+//				grid.getGrid()[((StateW)step.state).x+1][((StateW)step.state).y] = '\u0000';
+//			if(((StateW)step.state).x>0 && grid.getGrid()[((StateW)step.state).x-1][((StateW)step.state).y] == 'W')
+//				grid.getGrid()[((StateW)step.state).x-1][((StateW)step.state).y] = '\u0000';
+//			if(((StateW)step.state).y+1<grid.gridLength && grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y+1] == 'W')
+//				grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y+1] = '\u0000';
+//			if(((StateW)step.state).y>0 && grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y-1] == 'W')
+//				grid.getGrid()[((StateW)step.state).x][((StateW)step.state).y-1] = '\u0000';
+//			return true;
+//		default:
+//			return false;
+//		
+//		}
+//	}
 	
 	// to reflect the dequeueing on the grid
 	private boolean applyToGrid(Grid grid, Snode step) {
 		switch(step.operator) {
 		case Forward:
+			if(((StateW)step.parent.state).y*grid.gridWidth+((StateW)step.parent.state).x == grid.stonePosition())
+				grid.getGrid()[((StateW)step.parent.state).y][((StateW)step.parent.state).x] = 'S';
+			else
 			grid.getGrid()[((StateW)step.parent.state).y][((StateW)step.parent.state).x] = '\u0000';
 			grid.getGrid()[((StateW)step.state).y][((StateW)step.state).x] = 'J';
 			return true;
@@ -334,9 +376,7 @@ public Grid grid;
 			return false;
 		
 		}
-	}
-	
-	
+	}	
 	
 	
 	

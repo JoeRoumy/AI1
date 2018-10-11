@@ -33,7 +33,7 @@ public class StateW extends State {
         this.x = x;
         this.y = y;
         this.glassRemaining = glassRemaining;
-        this.walkersLeft = walkersLeft;
+        this.walkersLeft = walkerPositions.size();
         this. isGoal = walkersLeft == 0;
         this.walkerPositions = walkerPositions;
         this.totalGlassUsed = totGlass;

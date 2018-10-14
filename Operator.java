@@ -1,3 +1,5 @@
 
-//all possible actions
-	public enum Operator { RotLeft, Forward,Stab};
+/*
+ * all possible actions
+ */
+	public enum Operator {Stab, Forward, RotLeft};

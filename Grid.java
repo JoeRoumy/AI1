@@ -21,6 +21,8 @@ public class Grid {
     
     public int glassCapacity;
     
+    
+    //static grid constructor for testing
     public Grid(int x) {
         grid = new char[minDimension][minDimension];
         gridLength = minDimension;
@@ -46,7 +48,7 @@ public class Grid {
         
     }
     
-    
+    // grid constructor that generates a random sized grid with random positions 
     public Grid(){
         gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
         gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
@@ -109,7 +111,7 @@ public class Grid {
         
     }
     
-    //returns an arrayList of positions of all white walkers and dragon stone with dragon stone position being the last element of the returned array
+    //populates array lists containing random positions of white walkers, obstacles, and dragon stone
     @SuppressWarnings("unlikely-arg-type")
 	public static void generatePositions(int length, int width) {
         
@@ -118,7 +120,11 @@ public class Grid {
         Opositions = new ArrayList<Integer>();
         
         
-        // to be documented...
+        /*
+         * A randomly sized kernel iterates over the grid assigning random positions for obstacles and white 
+         *  walkers within the kernel range. If the kernel reaches the end of the grid, stone position is 
+         *  randomly generated and the function returns 
+         * */ 
         int minPosition = 0;
         int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
         System.out.println("The offset is " + offset  );
@@ -148,12 +154,19 @@ public class Grid {
         
     }
     
+    
+    
+    //main method
 //    public static void main(String [] args) {
 //        Grid myGrid = new Grid();
 //        
 //        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
 //        
 //    }
+    
+    
+    
+    //getters...
     
     public char [][] getGrid(){
         return this.grid;

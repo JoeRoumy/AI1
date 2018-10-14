@@ -1,18 +1,19 @@
 
 public class Snode {
-
+	
+	//depth getter
 	public int getDepth() {
 		return depth;
 	}
 
-
+	//Node as defined in class has a state, parent node, operator, depth, and cost
 	public State state;
 	public Snode parent;
 	public Operator operator;
 	public int depth;
 	public int cost;
 	
-	//To initialize tree node
+	//Node Constructor
 	public Snode(State aState, Snode aParent, Operator anOperator, int aDepth, int aCost) {
 		state = aState;
 		parent = aParent;
@@ -22,7 +23,7 @@ public class Snode {
 	}
 	
 	
-	//To initialize tree root
+	//Root Node Constructor 
 	public Snode(State initState) {
 		state = initState;
 		parent = null;

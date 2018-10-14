@@ -1,8 +1,11 @@
 import java.util.ArrayList;
 
+/*
+ * A State class that is implemented according to the problem specifications. 
+ */
+
 public class StateW extends State {
     
-    //    public enum Direction {N, S, W, E};
     
     public Direction direction;
     public int x;
@@ -14,7 +17,10 @@ public class StateW extends State {
     public ArrayList<Integer> walkerPositions;
     
     
-    
+    /* 
+     * initial state constructor
+     * all variables are set to the initial conditions of the grid. 
+     */
     public StateW(int maxX, int maxY, int glassRemaining,  ArrayList<Integer> walkers) {
         this.direction = Direction.N;
         this.x = maxX - 1;
@@ -27,6 +33,10 @@ public class StateW extends State {
         if(this.isGoal)
         	System.out.println("goal created!!");
     }
+    
+    /*
+     * State constructor 
+     */
     
     public StateW(Direction direction, int x, int y, int glassRemaining, int totGlass, int walkersLeft, ArrayList<Integer> walkerPositions ) {
         this.direction = direction;

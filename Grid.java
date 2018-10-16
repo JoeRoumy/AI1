@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Grid {
-
+    
     
     private static final int minDimension = 4;
     private static final int maxDimension = 6;
@@ -50,10 +50,10 @@ public class Grid {
         
     }
     
-    // grid constructor that generates a random sized grid with random positions 
+    // grid constructor that generates a random sized grid with random positions
     public Grid(){
         gridLength = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
-        //gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
+        // gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
         gridWidth = gridLength;
         johnsx = gridWidth-1;
         johnsy = gridLength-1;
@@ -62,8 +62,8 @@ public class Grid {
         generatePositions(gridLength, gridWidth);
         int WpositionSize = Wpositions.size();
         int OpositionSize = Opositions.size();
-        glassCapacity  = ThreadLocalRandom.current().nextInt(1,WpositionSize+1);
-
+        glassCapacity  = ThreadLocalRandom.current().nextInt(1, WpositionSize + 2);
+        
         
         // generating an empty grid then populating it
         grid = new char [gridLength][gridWidth];
@@ -115,7 +115,7 @@ public class Grid {
     
     //populates array lists containing random positions of white walkers, obstacles, and dragon stone
     @SuppressWarnings("unlikely-arg-type")
-	public static void generatePositions(int length, int width) {
+    public static void generatePositions(int length, int width) {
         
         allPositions = new ArrayList<Integer>();
         Wpositions = new ArrayList<Integer>();
@@ -123,13 +123,13 @@ public class Grid {
         
         
         /*
-         * A randomly sized kernel iterates over the grid assigning random positions for obstacles and white 
-         *  walkers within the kernel range. If the kernel reaches the end of the grid, stone position is 
-         *  randomly generated and the function returns 
-         * */ 
+         * A randomly sized kernel iterates over the grid assigning random positions for obstacles and white
+         *  walkers within the kernel range. If the kernel reaches the end of the grid, stone position is
+         *  randomly generated and the function returns
+         * */
         int minPosition = 0;
-//        int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
-        int offset = ThreadLocalRandom.current().nextInt(1, width + 3 );
+        //        int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
+        int offset = ThreadLocalRandom.current().nextInt(3, width + 1 );
         System.out.println("The offset is " + offset  );
         int maxPosition =  minPosition + offset ;
         
@@ -150,7 +150,8 @@ public class Grid {
         int stonePosition;
         do {
             stonePosition = ThreadLocalRandom.current().nextInt(1, length * width - 1);
-            isInArray =  Arrays.asList(allPositions).contains(stonePosition);
+            // isInArray =  Arrays.asList(allPositions).contains(stonePosition);
+            isInArray = allPositions.contains(stonePosition);
         }while(isInArray == true);
         
         Sposition = stonePosition;
@@ -160,12 +161,14 @@ public class Grid {
     
     
     //main method
-//    public static void main(String [] args) {
-//        Grid myGrid = new Grid();
-//        
-//        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
-//        
-//    }
+    //    public static void main(String [] args) {
+    //        Grid myGrid = new Grid();
+    //
+    //        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
+    //        System.out.println( "\n" + allPositions + "\n\n" + Wpositions + "\n" + Opositions + "\n" + Sposition);
+    //
+    //
+    //    }
     
     
     
@@ -188,3 +191,4 @@ public class Grid {
     
     
 }
+

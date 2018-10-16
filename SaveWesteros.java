@@ -26,7 +26,8 @@ public class SaveWesteros extends SearchProblem {
 	public static void main(String[] args) {
 		Grid grid = new Grid();
 		 System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ","]\n").replace("[[", "[").replace("]]", "]"));
-		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
+			System.out.println(grid.johnsx+","+grid.johnsy);
+		 SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
 		Date time = new Date();
 		ai.Search(grid, "AS2", true);
 		System.out.println((new Date().getTime()) - time.getTime());
@@ -150,7 +151,7 @@ public class SaveWesteros extends SearchProblem {
 			return null;
 		}
 
-		ArrayList<Snode> solution = new ArrayList<>(50);
+		ArrayList<Snode> solution = new ArrayList<>(9999);
 		solution = GenerateSolution(solution, leaf);
 
 		if (visualize) {
@@ -177,12 +178,13 @@ public class SaveWesteros extends SearchProblem {
 
 	// to visualize the solution step by step
 	private void PrintSolution(Grid grid, ArrayList<Snode> solution) {
-		System.out
-				.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
-						+ "\n\n");
+		System.out.println("\n\n\nGlass capacity :"+grid.glassCapacity);
+//		System.out
+//				.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
+//						+ "\n\n");
 //		System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(0)));
 
-		for (int i = 1; i < solution.size(); i++) {
+		for (int i = 0; i < solution.size(); i++) {
 			if (applyToGrid(grid, solution.get(i))) {
 				System.out.println(
 						Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
@@ -200,13 +202,14 @@ public class SaveWesteros extends SearchProblem {
 			// System.out.println("["+prnt.replace(",]", "]")+"\n\n");
 			// }
 			System.out.print(solution.get(i).operator + "\n");
-//			System.out.print(((StateW) solution.get(i).state).x + ",");
-//			System.out.println(((StateW) solution.get(i).state).y);
+			System.out.print(((StateW) solution.get(i).state).x + ",");
+			System.out.println(((StateW) solution.get(i).state).y);
 //			System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(i)));
 //			System.out.print(((StateW) solution.get(i).state).walkersLeft+" :: ");
 //			System.out.print(((StateW) solution.get(i).state).totalGlassUsed+" :: ");
-//			System.out.println(calculateHeuristic1(solution.get(i)));((StateW) solution.get(i).state).walkerPositions + 
-			System.out.println("\n-------------------\n");
+//			System.out.println(calculateHeuristic1(solution.get(i))); 
+			System.out.println(solution.get(i).parent.parent);
+			System.out.println(((StateW) solution.get(i).state).walkerPositions +"\n-------------------\n");
 		}
 		System.out.println("solution contains: " + solution.size() + " steps");
 		System.out.println(

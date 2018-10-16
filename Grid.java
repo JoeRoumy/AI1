@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Grid {
@@ -11,8 +10,8 @@ public class Grid {
     private static ArrayList<Integer> allPositions;
     
     //static initial position
-    public int johnsx = minDimension-1;
-    public int johnsy = minDimension-1;
+    public final int johnsx; //= minDimension-1;
+    public final int johnsy;// = minDimension-1;
     
     public int gridLength;
     public int gridWidth;
@@ -26,6 +25,8 @@ public class Grid {
     
     //static grid constructor for testing
     public Grid(int x) {
+    	johnsx = minDimension-1;
+        johnsy = minDimension-1;
         grid = new char[minDimension][minDimension];
         gridLength = minDimension;
         gridWidth = minDimension;
@@ -114,7 +115,6 @@ public class Grid {
     }
     
     //populates array lists containing random positions of white walkers, obstacles, and dragon stone
-    @SuppressWarnings("unlikely-arg-type")
     public static void generatePositions(int length, int width) {
         
         allPositions = new ArrayList<Integer>();

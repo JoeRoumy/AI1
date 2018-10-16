@@ -53,8 +53,8 @@ public class Grid {
     // grid constructor that generates a random sized grid with random positions 
     public Grid(){
         gridLength = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
-        gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
-        
+        //gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
+        gridWidth = gridLength;
         johnsx = gridWidth-1;
         johnsy = gridLength-1;
         

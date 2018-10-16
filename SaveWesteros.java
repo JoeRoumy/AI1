@@ -24,7 +24,7 @@ public class SaveWesteros extends SearchProblem {
 	public Grid grid;
 
 	public static void main(String[] args) {
-		Grid grid = new Grid(666);
+		Grid grid = new Grid(0);
 		// System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ",
 		// "]\n").replace("[[", "[").replace("]]", "]"));
 		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
@@ -87,8 +87,7 @@ public class SaveWesteros extends SearchProblem {
 					queue.add(n[i]);
 					continue;
 				}
-				double h = Math.sqrt(((StateW) n[i].state).walkersLeft * ((StateW) n[i].state).totalGlassUsed) / 3.0;
-				queue.add(binarySearchHeuristic1(queue, 0, queue.size() - 1, h), n[i]);
+				queue.add(binarySearchHeuristic1(queue, 0, queue.size() - 1, calculateHeuristic1(n[i])), n[i]);
 			}
 		}
 
@@ -103,8 +102,7 @@ public class SaveWesteros extends SearchProblem {
 					queue.add(n[i]);
 					continue;
 				}
-				double h = Math.sqrt(((StateW) n[i].state).walkersLeft * ((StateW) n[i].state).totalGlassUsed) / 3.0;
-				queue.add(binarySearchCostAndHeuristic1(queue, 0, queue.size() - 1, n[i].cost + h), n[i]);
+				queue.add(binarySearchCostAndHeuristic1(queue, 0, queue.size() - 1, n[i].cost + calculateHeuristic1(n[i])), n[i]);
 
 			}
 		}
@@ -183,6 +181,8 @@ public class SaveWesteros extends SearchProblem {
 		System.out
 				.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
 						+ "\n\n");
+//		System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(0)));
+
 		for (int i = 1; i < solution.size(); i++) {
 			if (applyToGrid(grid, solution.get(i))) {
 				System.out.println(
@@ -201,9 +201,13 @@ public class SaveWesteros extends SearchProblem {
 			// System.out.println("["+prnt.replace(",]", "]")+"\n\n");
 			// }
 			System.out.print(solution.get(i).operator + "\n");
-			System.out.print(((StateW) solution.get(i).state).x + ",");
-			System.out.println(((StateW) solution.get(i).state).y);
-			System.out.println(((StateW) solution.get(i).state).walkerPositions + "\n-------------------\n");
+//			System.out.print(((StateW) solution.get(i).state).x + ",");
+//			System.out.println(((StateW) solution.get(i).state).y);
+//			System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(i)));
+//			System.out.print(((StateW) solution.get(i).state).walkersLeft+" :: ");
+//			System.out.print(((StateW) solution.get(i).state).totalGlassUsed+" :: ");
+//			System.out.println(calculateHeuristic1(solution.get(i)));((StateW) solution.get(i).state).walkerPositions + 
+			System.out.println("\n-------------------\n");
 		}
 		System.out.println("solution contains: " + solution.size() + " steps");
 		System.out.println(
@@ -339,7 +343,7 @@ public class SaveWesteros extends SearchProblem {
 						currentWalkerPositions);
 				newNode = new Snode(newState, node, myOperator, currentDepth + 1, newCost);
 			}
-			newNodes[i] = newNode;
+			newNodes[i] = checkRepeated(newNode)? newNode: null;
 		}
 		return newNodes;
 	}
@@ -453,10 +457,8 @@ public class SaveWesteros extends SearchProblem {
 //		// redirect to left or right half
 		int i = 0;
 		for (; i < q.size(); i++) {
-			double h = Math.sqrt(((StateW) q.get(i).state).walkersLeft * ((StateW) q.get(i).state).totalGlassUsed)
-					/ 3.0;
-
-			if(h>newHeuristic)
+		
+			if(calculateHeuristic1(q.get(i))>newHeuristic)
 				break;
 		}
 		return i;
@@ -480,10 +482,8 @@ public class SaveWesteros extends SearchProblem {
 //		// redirect to left or right half
 		int i = 0;
 		for (; i < q.size(); i++) {
-			double h = Math.sqrt(((StateW) q.get(i).state).walkersLeft * ((StateW) q.get(i).state).totalGlassUsed)
-					/ 3.0;
 
-			if(h+ q.get(i).cost>newCostAndHeuristic)
+			if(calculateHeuristic1(q.get(i))+ q.get(i).cost>newCostAndHeuristic)
 				break;
 		}
 		return i;
@@ -623,5 +623,26 @@ public class SaveWesteros extends SearchProblem {
 	boolean goalTest(State s) {
 		return ((StateW) s).isGoal;
 	}
-
+	
+	double calculateHeuristic1(Snode n) {
+		double w = ((StateW) n.state).walkersLeft, g = ((StateW) n.state).totalGlassUsed;
+		return Math.sqrt(w*(g == 0? w:g))/3.0;
+	}
+	
+	boolean checkRepeated(Snode n) {
+		if(n == null)
+			return false;
+		Snode parent = n.parent;
+		StateW state = (StateW) n.state;
+		while (parent != null) {
+			StateW parentState = (StateW) parent.state;
+			if(state.x == parentState.x && state.y == parentState.y &&  state.direction == parentState.direction && state.glassRemaining == parentState.glassRemaining && state.totalGlassUsed == parentState.totalGlassUsed && state.walkersLeft == parentState.walkersLeft) {
+				return false;
+			}
+			parent = parent.parent;
+		}
+		
+		return true;
+	}
+	
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Grid {
@@ -10,8 +11,8 @@ public class Grid {
     private static ArrayList<Integer> allPositions;
     
     //static initial position
-    public final int johnsx; //= minDimension-1;
-    public final int johnsy;// = minDimension-1;
+    public int johnsx = minDimension-1;
+    public int johnsy = minDimension-1;
     
     public int gridLength;
     public int gridWidth;
@@ -25,31 +26,71 @@ public class Grid {
     
     //static grid constructor for testing
     public Grid(int x) {
-    	johnsx = minDimension-1;
-        johnsy = minDimension-1;
-        grid = new char[minDimension][minDimension];
-        gridLength = minDimension;
-        gridWidth = minDimension;
-        grid[3][3] = 'J';
-        grid[0][0] = 'W';
-        grid[0][2] = 'W';
-        grid[1][1] = 'W';
-        grid[1][3] = 'W';
-        grid[2][0] = 'S';
-        grid[2][3] = 'O';
-        grid[3][1] = 'O';
-        glassCapacity = 2;
         Wpositions = new ArrayList<>();
-        Wpositions.add(0);
-        Wpositions.add(2);
-        Wpositions.add(5);
-        Wpositions.add(7);
         Opositions = new ArrayList<>();
-        Opositions.add(11);
-        Opositions.add(13);
-        Sposition = 8;
+        
+        if(x < 3) {
+            grid = new char[minDimension][minDimension];
+            gridLength = minDimension;
+            gridWidth = minDimension;
+            grid[3][3] = 'J';
+            glassCapacity = 2;
+            
+            if(x == 1) {
+                grid[3][0] = 'W';
+                grid[3][2] = 'S';
+                Wpositions.add(12);
+                Sposition = 14;
+            }
+            if(x == 2) {
+                
+                grid[0][0] = 'W';
+                grid[0][2] = 'W';
+                grid[1][1] = 'W';
+                grid[1][3] = 'W';
+                grid[2][0] = 'S';
+                grid[2][3] = 'O';
+                grid[3][1] = 'O';
+                Wpositions.add(0);
+                Wpositions.add(2);
+                Wpositions.add(5);
+                Wpositions.add(7);
+                Opositions.add(11);
+                Opositions.add(13);
+                Sposition = 8;
+                
+            }
+        }
+        else {
+            grid = new char[maxDimension][maxDimension];
+            gridLength = maxDimension;
+            gridWidth = maxDimension;
+            grid[5][5] = 'J';
+            glassCapacity = 4;
+            
+            grid[0][1] = 'W';
+            grid[1][0] = 'W';
+            grid[2][3] = 'W';
+            grid[3][1] = 'W';
+            grid[4][1] = 'W';
+            grid[2][0] = 'O';
+            grid[4][4] = 'O';
+            grid[5][4] = 'S';
+            Wpositions.add(1);
+            Wpositions.add(6);
+            Wpositions.add(15);
+            Wpositions.add(19);
+            Wpositions.add(25);
+            Opositions.add(12);
+            Opositions.add(28);
+            Sposition = 34;
+            
+            
+            
+        }
         
     }
+    
     
     // grid constructor that generates a random sized grid with random positions
     public Grid(){
@@ -115,6 +156,7 @@ public class Grid {
     }
     
     //populates array lists containing random positions of white walkers, obstacles, and dragon stone
+    @SuppressWarnings("unlikely-arg-type")
     public static void generatePositions(int length, int width) {
         
         allPositions = new ArrayList<Integer>();
@@ -162,7 +204,7 @@ public class Grid {
     
     //main method
     //    public static void main(String [] args) {
-    //        Grid myGrid = new Grid();
+    //        Grid myGrid = new Grid(2);
     //
     //        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
     //        System.out.println( myGrid.johnsx + "," + myGrid.johnsy +  "\n" + allPositions + "\n\n" + Wpositions + "\n" + Opositions + "\n" + Sposition);
@@ -191,3 +233,4 @@ public class Grid {
     
     
 }
+

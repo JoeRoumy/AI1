@@ -128,9 +128,8 @@ public class Grid {
          *  randomly generated and the function returns
          * */
         int minPosition = 0;
-        //        int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
         int offset = ThreadLocalRandom.current().nextInt(3, width + 1 );
-        System.out.println("The offset is " + offset  );
+        //        System.out.println("The offset is " + offset  );
         int maxPosition =  minPosition + offset ;
         
         //reserve the last position of the grid to the initial state of Jon Snow
@@ -146,6 +145,7 @@ public class Grid {
             else Opositions.add(position);
             minPosition = position + 1;
         }
+        // System.out.println(allPositions);
         boolean isInArray = true;
         int stonePosition;
         do {
@@ -165,7 +165,7 @@ public class Grid {
     //        Grid myGrid = new Grid();
     //
     //        System.out.println(Arrays.deepToString(myGrid.grid).replace("], ", "]\n"));
-    //        System.out.println( "\n" + allPositions + "\n\n" + Wpositions + "\n" + Opositions + "\n" + Sposition);
+    //        System.out.println( myGrid.johnsx + "," + myGrid.johnsy +  "\n" + allPositions + "\n\n" + Wpositions + "\n" + Opositions + "\n" + Sposition);
     //
     //
     //    }
@@ -191,4 +191,3 @@ public class Grid {
     
     
 }
-

@@ -28,7 +28,7 @@ public class SaveWesteros extends SearchProblem {
 		 System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ","]\n").replace("[[", "[").replace("]]", "]"));
 		SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
 		Date time = new Date();
-		ai.Search(grid, "BF", true);
+		ai.Search(grid, "AS2", true);
 		System.out.println((new Date().getTime()) - time.getTime());
 	}
 

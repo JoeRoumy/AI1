@@ -128,7 +128,8 @@ public class Grid {
          *  randomly generated and the function returns 
          * */ 
         int minPosition = 0;
-        int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
+//        int offset = ThreadLocalRandom.current().nextInt(1, width + 1 );
+        int offset = ThreadLocalRandom.current().nextInt(1, width + 3 );
         System.out.println("The offset is " + offset  );
         int maxPosition =  minPosition + offset ;
         

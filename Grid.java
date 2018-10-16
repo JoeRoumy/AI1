@@ -6,6 +6,7 @@ public class Grid {
 
     
     private static final int minDimension = 4;
+    private static final int maxDimension = 6;
     private char [][] grid;
     private static ArrayList<Integer> allPositions;
     
@@ -51,8 +52,8 @@ public class Grid {
     
     // grid constructor that generates a random sized grid with random positions 
     public Grid(){
-        gridLength = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
-        gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, minDimension + 1);
+        gridLength = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
+        gridWidth  = ThreadLocalRandom.current().nextInt(minDimension, maxDimension + 1);
         
         johnsx = gridWidth-1;
         johnsy = gridLength-1;

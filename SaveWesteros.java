@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 
 /*
  * need to consider repeated states
@@ -26,11 +27,11 @@ public class SaveWesteros extends SearchProblem {
 	public static void main(String[] args) {
 		Grid grid = new Grid();
 		 System.out.println(Arrays.deepToString(grid.getGrid()).replace("], ","]\n").replace("[[", "[").replace("]]", "]"));
-			System.out.println(grid.johnsx+","+grid.johnsy);
+//			System.out.println(grid.johnsx+","+grid.johnsy);
 		 SaveWesteros ai = new SaveWesteros(new StateW(grid.gridWidth, grid.gridLength, 0, grid.getPositions()));
 		Date time = new Date();
-		ai.Search(grid, "AS2", true);
-		System.out.println((new Date().getTime()) - time.getTime());
+		ai.Search(grid, "DF", true);
+		System.out.println("Milliseconds taken: "+((new Date().getTime()) - time.getTime()));
 	}
 
 	public SaveWesteros(StateW initstate) {
@@ -142,7 +143,7 @@ public class SaveWesteros extends SearchProblem {
 	}
 
 	// control the search and visualization
-	private ArrayList<Snode> Search(Grid grid, String strategy, Boolean visualize) {
+	private Result Search(Grid grid, String strategy, Boolean visualize) {
 		this.grid = grid;
 		Snode leaf = generalSearch(this, strategy);
 
@@ -153,14 +154,23 @@ public class SaveWesteros extends SearchProblem {
 
 		ArrayList<Snode> solution = new ArrayList<>(9999);
 		solution = GenerateSolution(solution, leaf);
+		int totalCost = 0;
 
 		if (visualize) {
 			PrintSolution(grid, solution);
 		}
+		else {
+			for (Iterator<Snode> iterator = solution.iterator(); iterator.hasNext();) {
+				Snode snode = (Snode) iterator.next();
+				System.out.println(snode.operator);
+				totalCost+=snode.cost;
+			}
+			System.out.println("\n\nTotal cost: "+totalCost);
+
+		}
 
 		System.out.println("Nodes expanded: " + expandedNodes);
-
-		return solution;
+		return new Result(solution, totalCost, expandedNodes);
 
 	}
 
@@ -183,12 +193,15 @@ public class SaveWesteros extends SearchProblem {
 //				.println(Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
 //						+ "\n\n");
 //		System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(0)));
+		int totalCost = 0;
 
 		for (int i = 0; i < solution.size(); i++) {
 			if (applyToGrid(grid, solution.get(i))) {
 				System.out.println(
 						Arrays.deepToString(grid.getGrid()).replace("], ", "]\n").replace("[[", "[").replace("]]", "]")
 								+ "\n\n");
+				totalCost+=solution.get(i).cost;
+
 			}
 			// System.out.println(grid.getGrid()[0][2]);
 			// String prnt="";
@@ -202,18 +215,20 @@ public class SaveWesteros extends SearchProblem {
 			// System.out.println("["+prnt.replace(",]", "]")+"\n\n");
 			// }
 			System.out.print(solution.get(i).operator + "\n");
-			System.out.print(((StateW) solution.get(i).state).x + ",");
-			System.out.println(((StateW) solution.get(i).state).y);
+//			System.out.print(((StateW) solution.get(i).state).x + ",");
+//			System.out.println(((StateW) solution.get(i).state).y);
 //			System.out.println(distanceToClosestWalker(grid.gridLength, solution.get(i)));
 //			System.out.print(((StateW) solution.get(i).state).walkersLeft+" :: ");
 //			System.out.print(((StateW) solution.get(i).state).totalGlassUsed+" :: ");
 //			System.out.println(calculateHeuristic1(solution.get(i))); 
-			System.out.println(solution.get(i).parent.parent);
-			System.out.println(((StateW) solution.get(i).state).walkerPositions +"\n-------------------\n");
+//			System.out.println(solution.get(i).parent.parent);((StateW) solution.get(i).state).walkerPositions +
+			System.out.println("\n-------------------\n");
 		}
 		System.out.println("solution contains: " + solution.size() + " steps");
 		System.out.println(
 				"solution used: " + ((StateW) solution.get(solution.size() - 1).state).totalGlassUsed + " glass");
+		System.out.println("Total cost: "+totalCost);
+
 	}
 
 	// to generate the child nodes of a given node
